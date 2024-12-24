@@ -7,5 +7,7 @@
     "prompt": "",
     "proxy_url": "${env:OPENAI_PROXY_URL}",
     "greeting": "TEN Agent connected. How can I help you today?",
-    "max_memory_length": 10
+    "max_memory_length": 10,
+    "vector_db_url": "${env:QDRANT_URL}",
+    "vector_db_api_key": "${env:QDRANT_API_KEY}"
 }

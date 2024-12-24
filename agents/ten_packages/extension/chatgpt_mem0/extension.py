@@ -7,7 +7,7 @@ import asyncio
 import json
 import traceback
 from typing import Iterable
-from mem0 import MemoryClient
+from .my_mem0 import MyMemManager
 
 from ten.async_ten_env import AsyncTenEnv
 from ten.ten_env import TenEnv
@@ -38,11 +38,6 @@ DATA_IN_TEXT_DATA_PROPERTY_IS_FINAL = "is_final"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT_END_OF_SEGMENT = "end_of_segment"
 
-mem0_api_key = "m0-GoCNBySarPDgCQaoTgELfqiwrfzFOp1uPZ9IQasb"
-client_mem0 = MemoryClient(api_key=mem0_api_key)
-
-
-
 class ChatGPTMem0Extension(AsyncLLMBaseExtension):
     def __init__(self, name: str):
         super().__init__(name)
@@ -64,7 +59,6 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
 
         self.config = OpenAIChatGPTConfig.create(ten_env=ten_env)
 
-
         # Mandatory properties
         if not self.config.api_key:
             ten_env.log_info(f"API key is missing, exiting on_start")
@@ -76,7 +70,13 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
             ten_env.log_info(
                 f"initialized with max_tokens: {self.config.max_tokens}, model: {self.config.model}, vendor: {self.config.vendor}")
         except Exception as err:
-            ten_env.log_info(f"Failed to initialize OpenAIChatGPT: {err}")
+            ten_env.log_error(f"Failed to initialize OpenAIChatGPT: {err}")
+        
+        try:
+            self.memory_manager = MyMemManager(ten_env, self.config)
+        except Exception as err:
+            ten_env.log_error(f"Failed to initialize Mem0: {err}")
+        
 
     async def on_stop(self, ten_env: AsyncTenEnv) -> None:
         ten_env.log_info("on_stop")
@@ -133,15 +133,28 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
             return
 
         ten_env.log_info(f"OnData input text: [{input_text}]")
-
-        # Start an asynchronous task for handling chat completion
-        message = LLMChatCompletionUserMessageParam(
-            role="user", content=input_text)
-        client_mem0.add(message, user_id="chenminghua")
-        query = "What can I cook for dinner tonight?"
-        client.search(query, user_id="chenminghua", output_format="v1.1", metadata={"food": "vegan"})
-
-        await self.queue_input_item(False, messages=[message])
+        try:
+            memory_text = self.memory_manager.search(input_text, user_id="chenminghua")
+            prompt = f"User input: {input_text}\nPrevious memories: {memory_text}"
+            ten_env.log_info(f"Prompt: {prompt}")
+            
+            # Start an asynchronous task for handling chat completion
+            message = LLMChatCompletionUserMessageParam(
+                role="user", content=prompt)
+            
+            try:
+                await self.memory_manager.add(input_text, user_id="chenminghua")
+            except Exception as mem_err:
+                ten_env.log_warn(f"Memory addition failed: {str(mem_err)}")
+            
+            await self.queue_input_item(False, messages=[message])
+            
+        except Exception as e:
+            ten_env.log_error(f"Error in memory operations: {str(e)}")
+            # 可以选择使用没有记忆的基础提示继续
+            message = LLMChatCompletionUserMessageParam(
+                role="user", content=input_text)
+            await self.queue_input_item(False, messages=[message])
 
     async def on_tools_update(self, ten_env: TenEnv, tool: LLMToolMetadata) -> None:
         return await super().on_tools_update(ten_env, tool)

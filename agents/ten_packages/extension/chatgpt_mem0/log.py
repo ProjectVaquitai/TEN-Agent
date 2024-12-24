@@ -7,7 +7,7 @@
 #
 import logging
 
-logger = logging.getLogger("openai_chatgpt_python")
+logger = logging.getLogger("chatgpt_mem0")
 logger.setLevel(logging.INFO)
 
 formatter_str = (

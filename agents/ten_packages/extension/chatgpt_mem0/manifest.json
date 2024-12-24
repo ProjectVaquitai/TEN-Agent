@@ -66,6 +66,12 @@
       },
       "azure_api_version": {
         "type": "string"
+      },
+      "vector_db_url": {
+        "type": "string"
+      },
+      "vector_db_api_key": {
+        "type": "string"
       }
     },
     "data_in": [

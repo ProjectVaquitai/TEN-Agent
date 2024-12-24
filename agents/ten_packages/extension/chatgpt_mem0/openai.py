@@ -35,6 +35,8 @@ class OpenAIChatGPTConfig(BaseConfig):
     vendor: str = "openai"
     azure_endpoint: str = ""
     azure_api_version: str = ""
+    vector_db_url: str = ""
+    vector_db_api_key: str = ""
 
 
 class OpenAIChatGPT:
