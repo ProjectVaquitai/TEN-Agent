@@ -7,7 +7,11 @@ import asyncio
 import json
 import traceback
 from typing import Iterable
+from langfuse import Langfuse
 from .my_mem0 import MyMemManager
+import time
+import threading
+
 
 from ten.async_ten_env import AsyncTenEnv
 from ten.ten_env import TenEnv
@@ -37,6 +41,16 @@ DATA_IN_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_IN_TEXT_DATA_PROPERTY_IS_FINAL = "is_final"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT_END_OF_SEGMENT = "end_of_segment"
+
+LANGFUSE_SECRET_KEY="sk-lf-ad715cab-1e6d-40cf-8dd8-f4893f031465"
+LANGFUSE_PUBLIC_KEY="pk-lf-7c52ac2f-908a-402b-9372-f88320c45c3c"
+LANGFUSE_HOST="https://us.cloud.langfuse.com"
+
+langfuse = Langfuse(
+  secret_key="sk-lf-ad715cab-1e6d-40cf-8dd8-f4893f031465",
+  public_key="pk-lf-7c52ac2f-908a-402b-9372-f88320c45c3c",
+  host="https://us.cloud.langfuse.com"
+)
 
 class ChatGPTMem0Extension(AsyncLLMBaseExtension):
     def __init__(self, name: str):
@@ -142,12 +156,34 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
             message = LLMChatCompletionUserMessageParam(
                 role="user", content=prompt)
             
-            try:
-                await self.memory_manager.add(input_text, user_id="chenminghua")
-            except Exception as mem_err:
-                ten_env.log_warn(f"Memory addition failed: {str(mem_err)}")
+            # start_time = time.time()
+            # ten_env.log_info(f"Adding Memory")
+
+            # try:
+            #     await self.memory_manager.add(input_text, user_id="chenminghua")
+            # except Exception as mem_err:
+            #     ten_env.log_warn(f"Memory addition failed: {str(mem_err)}")
+
+            # ten_env.log_info(f"Adding Cost:{round(time.time() - start_time, 2)}")
             
+            # await self.queue_input_item(False, messages=[message])
+
+
+            def process_memory_operations():
+                mem_time = time.time()
+                ten_env.log_info(f"Adding Memory")
+                try:
+                    self.memory_manager.memory.add(input_text, user_id="chenminghua")
+                except Exception as mem_err:
+                    ten_env.log_warn(f"Memory addition failed: {str(mem_err)}")
+                ten_env.log_info(f"Adding Cost:{round(time.time() - mem_time, 2)}")
+
+
+            thread = threading.Thread(target=process_memory_operations)
+            thread.start()
+
             await self.queue_input_item(False, messages=[message])
+
             
         except Exception as e:
             ten_env.log_error(f"Error in memory operations: {str(e)}")
