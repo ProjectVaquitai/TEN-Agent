@@ -24,10 +24,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/gogf/gf/crypto/gmd5"
+	"github.com/google/uuid"
 )
 
 type HttpServer struct {
-	config *HttpServerConfig
+	config       *HttpServerConfig
+	engine       *gin.Engine
+	userStore    UserStore
+	sessionStore SessionStore
 }
 
 type HttpServerConfig struct {
@@ -83,9 +87,15 @@ type VectorDocumentUpload struct {
 }
 
 func NewHttpServer(httpServerConfig *HttpServerConfig) *HttpServer {
-	return &HttpServer{
-		config: httpServerConfig,
+	userStore := NewInMemoryUserStore()       // add user store
+	sessionStore := NewInMemorySessionStore() // add session store
+	s := &HttpServer{
+		config:       httpServerConfig,
+		userStore:    userStore,    // store reference
+		sessionStore: sessionStore, // initialize session store
 	}
+	s.engine = gin.Default()
+	return s
 }
 
 func (s *HttpServer) handlerHealth(c *gin.Context) {
@@ -613,8 +623,138 @@ func (s *HttpServer) processProperty(req *StartReq) (propertyJsonFile string, lo
 	return
 }
 
+func (s *HttpServer) handleCreateUser(c *gin.Context) {
+	var req struct {
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		slog.Error("create user invalid params", "err", err, logTag)
+		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		return
+	}
+	user := &User{
+		ID:           uuid.NewString(),
+		Name:         req.Name,
+		Email:        req.Email,
+		PasswordHash: req.Password, // For demo only, use proper hash in real app
+	}
+	if err := s.userStore.CreateUser(user); err != nil {
+		slog.Error("create user failed", "err", err, logTag)
+		s.output(c, codeErrCreateUserFailed, http.StatusInternalServerError)
+		return
+	}
+	s.output(c, codeSuccess, user)
+}
+
+func (s *HttpServer) handleGetUser(c *gin.Context) {
+	id := c.Param("id")
+	user, err := s.userStore.GetUserByID(id)
+	if err != nil || user.IsArchived {
+		s.output(c, codeErrUserNotFound, http.StatusNotFound)
+		return
+	}
+	s.output(c, codeSuccess, user)
+}
+
+func (s *HttpServer) handleUpdateUser(c *gin.Context) {
+	id := c.Param("id")
+	var req struct {
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		slog.Error("update user invalid params", "err", err, logTag)
+		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		return
+	}
+	user, err := s.userStore.GetUserByID(id)
+	if err != nil {
+		s.output(c, codeErrUserNotFound, http.StatusNotFound)
+		return
+	}
+	user.Name = req.Name
+	user.Email = req.Email
+	user.PasswordHash = req.Password
+	if err := s.userStore.UpdateUser(user); err != nil {
+		s.output(c, codeErrUpdateUserFailed, http.StatusInternalServerError)
+		return
+	}
+	s.output(c, codeSuccess, user)
+}
+
+func (s *HttpServer) handleArchiveUser(c *gin.Context) {
+	id := c.Param("id")
+	if err := s.userStore.ArchiveUser(id); err != nil {
+		s.output(c, codeErrUserNotFound, http.StatusNotFound)
+		return
+	}
+	s.output(c, codeSuccess, fmt.Sprintf("User %s archived", id))
+}
+
+func (s *HttpServer) handleLogin(c *gin.Context) {
+	var req struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		return
+	}
+	user, err := s.userStore.GetUserByEmail(req.Email)
+	if err != nil || user.IsArchived {
+		s.output(c, codeErrUserNotFound, http.StatusUnauthorized)
+		return
+	}
+	if user.PasswordHash != req.Password {
+		s.output(c, codeErrAuthFailed, http.StatusUnauthorized)
+		return
+	}
+	token := uuid.NewString()
+	session := &Session{
+		Token:  token,
+		UserID: user.ID,
+	}
+	if err := s.sessionStore.CreateSession(session); err != nil {
+		s.output(c, codeErrCreateSessionFailed, http.StatusInternalServerError)
+		return
+	}
+	s.output(c, codeSuccess, gin.H{"token": token})
+}
+
+func (s *HttpServer) handleLogout(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	if err := s.sessionStore.DeleteSession(token); err != nil {
+		s.output(c, codeErrAuthFailed, http.StatusUnauthorized)
+		return
+	}
+	s.output(c, codeSuccess, "logged out")
+}
+
+func (s *HttpServer) handleVerifyToken(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	session, err := s.sessionStore.GetSession(token)
+	if err != nil {
+		s.output(c, codeErrAuthFailed, http.StatusUnauthorized)
+		return
+	}
+	user, err := s.userStore.GetUserByID(session.UserID)
+	if err != nil || user.IsArchived {
+		s.output(c, codeErrUserNotFound, http.StatusUnauthorized)
+		return
+	}
+	s.output(c, codeSuccess, user)
+}
+
+func (s *HttpServer) handleRegister(c *gin.Context) {
+	// For simplicity, re-use handleCreateUser logic
+	s.handleCreateUser(c)
+}
+
 func (s *HttpServer) Start() {
-	r := gin.Default()
+	r := s.engine
 	r.Use(corsMiddleware())
 
 	r.GET("/", s.handlerHealth)
@@ -628,6 +768,17 @@ func (s *HttpServer) Start() {
 	r.GET("/vector/document/preset/list", s.handlerVectorDocumentPresetList)
 	r.POST("/vector/document/update", s.handlerVectorDocumentUpdate)
 	r.POST("/vector/document/upload", s.handlerVectorDocumentUpload)
+
+	// User management
+	r.POST("/users", s.handleCreateUser)
+	r.PUT("/users/:id", s.handleUpdateUser)
+	r.DELETE("/users/:id", s.handleArchiveUser)
+	r.GET("/users/:id", s.handleGetUser)
+	r.POST("/register", s.handleRegister)
+
+	r.POST("/login", s.handleLogin)
+	r.POST("/logout", s.handleLogout)
+	r.POST("/token/verify", s.handleVerifyToken)
 
 	slog.Info("server start", "port", s.config.Port, logTag)
 
