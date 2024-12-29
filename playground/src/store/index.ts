@@ -4,8 +4,6 @@ import globalReducer from "./reducers/global"
 import authReducer from "./reducers/authReducer"
 import { configureStore } from "@reduxjs/toolkit"
 
-export * from "./provider"
-
 export const makeStore = () => {
   return configureStore({
     reducer: {
@@ -16,8 +14,10 @@ export const makeStore = () => {
   })
 }
 
-// Infer the type of makeStore
+// Create a store instance
+export const store = makeStore()
+
+export * from "./provider"
 export type AppStore = ReturnType<typeof makeStore>
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<AppStore["getState"]>
 export type AppDispatch = AppStore["dispatch"]

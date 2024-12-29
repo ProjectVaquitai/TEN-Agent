@@ -721,7 +721,7 @@ func (s *HttpServer) handleLogin(c *gin.Context) {
 		s.output(c, codeErrCreateSessionFailed, nil, http.StatusInternalServerError)
 		return
 	}
-	s.output(c, codeSuccess, gin.H{"token": token}, http.StatusCreated)
+	s.output(c, codeSuccess, gin.H{"token": token}, http.StatusOK)
 }
 
 func (s *HttpServer) handleLogout(c *gin.Context) {

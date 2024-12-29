@@ -257,7 +257,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"name":"Bob","email":"bob@
 #### Login
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"email":"alice@example.com","password":"1234"}' http://localhost:8080/login
+curl -X POST -H "Content-Type: application/json" -d '{"email":"bob@example.com","password":"abcd"}' http://localhost:8080/login
 ```
 
 #### Logout
@@ -269,7 +269,7 @@ curl -X POST -H "Authorization: <TOKEN_FROM_LOGIN>" http://localhost:8080/logout
 #### Verify Token
 
 ```bash
-curl -X POST -H "Authorization: <TOKEN_FROM_LOGIN>" http://localhost:8080/token/verify
+curl -X POST -H "Authorization: '4a4dc638-1099-4fa6-9532-0b9b9f33c547'" http://localhost:8080/token/verify
 ```
 
 ### Flow
