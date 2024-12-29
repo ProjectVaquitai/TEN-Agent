@@ -6,7 +6,7 @@ export default function Home() {
       <h1>Welcome to Ten Agent</h1>
       <div>
         <Link href="/login">Login</Link>
-        <Link href="/src/app/register">Register</Link>
+        <Link href="/register">Register</Link>
       </div>
     </main>
   )

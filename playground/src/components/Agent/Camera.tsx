@@ -6,15 +6,18 @@ import { CamIconByStatus } from "@/components/Icon"
 import AgoraRTC, { ICameraVideoTrack, ILocalVideoTrack } from "agora-rtc-sdk-ng"
 // import { LocalStreamPlayer } from "../streamPlayer"
 // import { useSmallScreen } from "@/common"
-import {
-  DeviceSelect,
-} from "@/components/Agent/Microphone"
+import { DeviceSelect } from "@/components/Agent/Microphone"
 import { Button } from "@/components/ui/button"
 import { LocalStreamPlayer } from "@/components/Agent/StreamPlayer"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select"
 import { VIDEO_SOURCE_OPTIONS, VideoSourceType } from "@/common"
 import { MonitorIcon, MonitorXIcon } from "lucide-react"
-
 
 export const ScreenIconByStatus = (
   props: React.SVGProps<SVGSVGElement> & { active?: boolean; color?: string },
@@ -38,7 +41,15 @@ export function VideoDeviceWrapper(props: {
   isActive: boolean
   select?: React.ReactNode
 }) {
-  const { Icon, onIconClick, isActive, select, children, onVideoSourceChange, videoSourceType } = props
+  const {
+    Icon,
+    onIconClick,
+    isActive,
+    select,
+    children,
+    onVideoSourceChange,
+    videoSourceType,
+  } = props
 
   return (
     <div className="flex flex-col">
@@ -78,12 +89,13 @@ export function VideoDeviceWrapper(props: {
 }
 
 export default function VideoBlock(props: {
-  videoSourceType:VideoSourceType,
-  onVideoSourceChange:(value: VideoSourceType) => void,
-  cameraTrack?: ICameraVideoTrack,
+  videoSourceType: VideoSourceType
+  onVideoSourceChange: (value: VideoSourceType) => void
+  cameraTrack?: ICameraVideoTrack
   screenTrack?: ILocalVideoTrack
 }) {
-  const { videoSourceType, cameraTrack, screenTrack, onVideoSourceChange } = props
+  const { videoSourceType, cameraTrack, screenTrack, onVideoSourceChange } =
+    props
   const [videoMute, setVideoMute] = React.useState(false)
 
   React.useEffect(() => {
@@ -98,15 +110,31 @@ export default function VideoBlock(props: {
   return (
     <VideoDeviceWrapper
       title="VIDEO"
-      Icon={videoSourceType === VideoSourceType.CAMERA ? CamIconByStatus : ScreenIconByStatus}
+      Icon={
+        videoSourceType === VideoSourceType.CAMERA
+          ? CamIconByStatus
+          : ScreenIconByStatus
+      }
       onIconClick={onClickMute}
       isActive={!videoMute}
       videoSourceType={videoSourceType}
       onVideoSourceChange={onVideoSourceChange}
-      select={videoSourceType === VideoSourceType.CAMERA ? <CamSelect videoTrack={cameraTrack} /> : <div className="w-[180px]" />}
+      select={
+        videoSourceType === VideoSourceType.CAMERA ? (
+          <CamSelect videoTrack={cameraTrack} />
+        ) : (
+          <div className="w-[180px]" />
+        )
+      }
     >
       <div className="my-3 h-52 w-full overflow-hidden rounded-lg">
-        <LocalStreamPlayer videoTrack={videoSourceType === VideoSourceType.CAMERA ? cameraTrack : screenTrack} />
+        <LocalStreamPlayer
+          videoTrack={
+            videoSourceType === VideoSourceType.CAMERA
+              ? cameraTrack
+              : screenTrack
+          }
+        />
       </div>
     </VideoDeviceWrapper>
   )

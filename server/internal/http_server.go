@@ -127,7 +127,7 @@ func (s *HttpServer) handleAddonDefaultProperties(c *gin.Context) {
 	entries, err := os.ReadDir(baseDir)
 	if err != nil {
 		slog.Error("failed to read extension directory", "err", err, logTag)
-		s.output(c, codeErrReadDirectoryFailed, http.StatusInternalServerError)
+		s.output(c, codeErrReadDirectoryFailed, nil, http.StatusInternalServerError)
 		return
 	}
 
@@ -165,7 +165,7 @@ func (s *HttpServer) handlerPing(c *gin.Context) {
 
 	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		slog.Error("handlerPing params invalid", "err", err, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -173,13 +173,13 @@ func (s *HttpServer) handlerPing(c *gin.Context) {
 
 	if strings.TrimSpace(req.ChannelName) == "" {
 		slog.Error("handlerPing channel empty", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelEmpty, http.StatusBadRequest)
+		s.output(c, codeErrChannelEmpty, nil, http.StatusBadRequest)
 		return
 	}
 
 	if !workers.Contains(req.ChannelName) {
 		slog.Error("handlerPing channel not existed", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelNotExisted, http.StatusBadRequest)
+		s.output(c, codeErrChannelNotExisted, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -200,25 +200,25 @@ func (s *HttpServer) handlerStart(c *gin.Context) {
 
 	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		slog.Error("handlerStart params invalid", "err", err, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 
 	if strings.TrimSpace(req.ChannelName) == "" {
 		slog.Error("handlerStart channel empty", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelEmpty, http.StatusBadRequest)
+		s.output(c, codeErrChannelEmpty, nil, http.StatusBadRequest)
 		return
 	}
 
 	if workersRunning >= s.config.WorkersMax {
 		slog.Error("handlerStart workers exceed", "workersRunning", workersRunning, "WorkersMax", s.config.WorkersMax, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrWorkersLimit, http.StatusTooManyRequests)
+		s.output(c, codeErrWorkersLimit, nil, http.StatusTooManyRequests)
 		return
 	}
 
 	if workers.Contains(req.ChannelName) {
 		slog.Error("handlerStart channel existed", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelExisted, http.StatusBadRequest)
+		s.output(c, codeErrChannelExisted, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -236,7 +236,7 @@ func (s *HttpServer) handlerStart(c *gin.Context) {
 		// Reject if more than 3 workers are using the same graphName
 		if graphNameCount >= MAX_GEMINI_WORKER_COUNT {
 			slog.Error("handlerStart graphName workers exceed limit", "graphName", req.GraphName, "graphNameCount", graphNameCount, logTag)
-			s.output(c, codeErrWorkersLimit, http.StatusTooManyRequests)
+			s.output(c, codeErrWorkersLimit, nil, http.StatusTooManyRequests)
 			return
 		}
 	}
@@ -245,7 +245,7 @@ func (s *HttpServer) handlerStart(c *gin.Context) {
 	propertyJsonFile, logFile, err := s.processProperty(&req)
 	if err != nil {
 		slog.Error("handlerStart process property", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrProcessPropertyFailed, http.StatusInternalServerError)
+		s.output(c, codeErrProcessPropertyFailed, nil, http.StatusInternalServerError)
 		return
 	}
 
@@ -261,7 +261,7 @@ func (s *HttpServer) handlerStart(c *gin.Context) {
 
 	if err := worker.start(&req); err != nil {
 		slog.Error("handlerStart start worker failed", "err", err, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrStartWorkerFailed, http.StatusInternalServerError)
+		s.output(c, codeErrStartWorkerFailed, nil, http.StatusInternalServerError)
 		return
 	}
 	workers.SetIfNotExist(req.ChannelName, worker)
@@ -275,7 +275,7 @@ func (s *HttpServer) handlerStop(c *gin.Context) {
 
 	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		slog.Error("handlerStop params invalid", "err", err, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -283,20 +283,20 @@ func (s *HttpServer) handlerStop(c *gin.Context) {
 
 	if strings.TrimSpace(req.ChannelName) == "" {
 		slog.Error("handlerStop channel empty", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelEmpty, http.StatusBadRequest)
+		s.output(c, codeErrChannelEmpty, nil, http.StatusBadRequest)
 		return
 	}
 
 	if !workers.Contains(req.ChannelName) {
 		slog.Error("handlerStop channel not existed", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelNotExisted, http.StatusBadRequest)
+		s.output(c, codeErrChannelNotExisted, nil, http.StatusBadRequest)
 		return
 	}
 
 	worker := workers.Get(req.ChannelName).(*Worker)
 	if err := worker.stop(req.RequestId, req.ChannelName); err != nil {
 		slog.Error("handlerStop kill app failed", "err", err, "worker", workers.Get(req.ChannelName), "requestId", req.RequestId, logTag)
-		s.output(c, codeErrStopWorkerFailed, http.StatusInternalServerError)
+		s.output(c, codeErrStopWorkerFailed, nil, http.StatusInternalServerError)
 		return
 	}
 
@@ -309,7 +309,7 @@ func (s *HttpServer) handlerGenerateToken(c *gin.Context) {
 
 	if err := c.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		slog.Error("handlerGenerateToken params invalid", "err", err, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -317,7 +317,7 @@ func (s *HttpServer) handlerGenerateToken(c *gin.Context) {
 
 	if strings.TrimSpace(req.ChannelName) == "" {
 		slog.Error("handlerGenerateToken channel empty", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelEmpty, http.StatusBadRequest)
+		s.output(c, codeErrChannelEmpty, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -329,7 +329,7 @@ func (s *HttpServer) handlerGenerateToken(c *gin.Context) {
 	token, err := rtctokenbuilder.BuildTokenWithRtm(s.config.AppId, s.config.AppCertificate, req.ChannelName, fmt.Sprintf("%d", req.Uid), rtctokenbuilder.RolePublisher, tokenExpirationInSeconds, tokenExpirationInSeconds)
 	if err != nil {
 		slog.Error("handlerGenerateToken generate token failed", "err", err, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrGenerateTokenFailed, http.StatusBadRequest)
+		s.output(c, codeErrGenerateTokenFailed, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -345,7 +345,7 @@ func (s *HttpServer) handlerVectorDocumentPresetList(c *gin.Context) {
 		err := json.Unmarshal([]byte(vectorDocumentPresetList), &presetList)
 		if err != nil {
 			slog.Error("handlerVectorDocumentPresetList parse json failed", "err", err, logTag)
-			s.output(c, codeErrParseJsonFailed, http.StatusBadRequest)
+			s.output(c, codeErrParseJsonFailed, nil, http.StatusBadRequest)
 			return
 		}
 	}
@@ -358,13 +358,13 @@ func (s *HttpServer) handlerVectorDocumentUpdate(c *gin.Context) {
 
 	if err := c.ShouldBind(&req); err != nil {
 		slog.Error("handlerVectorDocumentUpdate params invalid", "err", err, "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 
 	if !workers.Contains(req.ChannelName) {
 		slog.Error("handlerVectorDocumentUpdate channel not existed", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelNotExisted, http.StatusBadRequest)
+		s.output(c, codeErrChannelNotExisted, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -384,7 +384,7 @@ func (s *HttpServer) handlerVectorDocumentUpdate(c *gin.Context) {
 	})
 	if err != nil {
 		slog.Error("handlerVectorDocumentUpdate update worker failed", "err", err, "channelName", req.ChannelName, "Collection", req.Collection, "FileName", req.FileName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrUpdateWorkerFailed, http.StatusBadRequest)
+		s.output(c, codeErrUpdateWorkerFailed, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -397,13 +397,13 @@ func (s *HttpServer) handlerVectorDocumentUpload(c *gin.Context) {
 
 	if err := c.ShouldBind(&req); err != nil {
 		slog.Error("handlerVectorDocumentUpload params invalid", "err", err, "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 
 	if !workers.Contains(req.ChannelName) {
 		slog.Error("handlerVectorDocumentUpload channel not existed", "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrChannelNotExisted, http.StatusBadRequest)
+		s.output(c, codeErrChannelNotExisted, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -413,7 +413,7 @@ func (s *HttpServer) handlerVectorDocumentUpload(c *gin.Context) {
 	uploadFile := fmt.Sprintf("%s/file-%s-%d%s", s.config.LogPath, gmd5.MustEncryptString(req.ChannelName), time.Now().UnixNano(), filepath.Ext(file.Filename))
 	if err := c.SaveUploadedFile(file, uploadFile); err != nil {
 		slog.Error("handlerVectorDocumentUpload save file failed", "err", err, "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrSaveFileFailed, http.StatusBadRequest)
+		s.output(c, codeErrSaveFileFailed, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -436,7 +436,7 @@ func (s *HttpServer) handlerVectorDocumentUpload(c *gin.Context) {
 	})
 	if err != nil {
 		slog.Error("handlerVectorDocumentUpload update worker failed", "err", err, "channelName", req.ChannelName, "requestId", req.RequestId, logTag)
-		s.output(c, codeErrUpdateWorkerFailed, http.StatusBadRequest)
+		s.output(c, codeErrUpdateWorkerFailed, nil, http.StatusBadRequest)
 		return
 	}
 
@@ -631,7 +631,7 @@ func (s *HttpServer) handleCreateUser(c *gin.Context) {
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		slog.Error("create user invalid params", "err", err, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 	user := &User{
@@ -642,17 +642,17 @@ func (s *HttpServer) handleCreateUser(c *gin.Context) {
 	}
 	if err := s.userStore.CreateUser(user); err != nil {
 		slog.Error("create user failed", "err", err, logTag)
-		s.output(c, codeErrCreateUserFailed, http.StatusInternalServerError)
+		s.output(c, codeErrCreateUserFailed, nil, http.StatusInternalServerError)
 		return
 	}
-	s.output(c, codeSuccess, user)
+	s.output(c, codeSuccess, user, http.StatusCreated)
 }
 
 func (s *HttpServer) handleGetUser(c *gin.Context) {
 	id := c.Param("id")
 	user, err := s.userStore.GetUserByID(id)
 	if err != nil || user.IsArchived {
-		s.output(c, codeErrUserNotFound, http.StatusNotFound)
+		s.output(c, codeErrUserNotFound, nil, http.StatusNotFound)
 		return
 	}
 	s.output(c, codeSuccess, user)
@@ -667,19 +667,19 @@ func (s *HttpServer) handleUpdateUser(c *gin.Context) {
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		slog.Error("update user invalid params", "err", err, logTag)
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 	user, err := s.userStore.GetUserByID(id)
 	if err != nil {
-		s.output(c, codeErrUserNotFound, http.StatusNotFound)
+		s.output(c, codeErrUserNotFound, nil, http.StatusNotFound)
 		return
 	}
 	user.Name = req.Name
 	user.Email = req.Email
 	user.PasswordHash = req.Password
 	if err := s.userStore.UpdateUser(user); err != nil {
-		s.output(c, codeErrUpdateUserFailed, http.StatusInternalServerError)
+		s.output(c, codeErrUpdateUserFailed, nil, http.StatusInternalServerError)
 		return
 	}
 	s.output(c, codeSuccess, user)
@@ -688,7 +688,7 @@ func (s *HttpServer) handleUpdateUser(c *gin.Context) {
 func (s *HttpServer) handleArchiveUser(c *gin.Context) {
 	id := c.Param("id")
 	if err := s.userStore.ArchiveUser(id); err != nil {
-		s.output(c, codeErrUserNotFound, http.StatusNotFound)
+		s.output(c, codeErrUserNotFound, nil, http.StatusNotFound)
 		return
 	}
 	s.output(c, codeSuccess, fmt.Sprintf("User %s archived", id))
@@ -700,16 +700,16 @@ func (s *HttpServer) handleLogin(c *gin.Context) {
 		Password string `json:"password"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		s.output(c, codeErrParamsInvalid, http.StatusBadRequest)
+		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
 	user, err := s.userStore.GetUserByEmail(req.Email)
 	if err != nil || user.IsArchived {
-		s.output(c, codeErrUserNotFound, http.StatusUnauthorized)
+		s.output(c, codeErrUserNotFound, nil, http.StatusUnauthorized)
 		return
 	}
 	if user.PasswordHash != req.Password {
-		s.output(c, codeErrAuthFailed, http.StatusUnauthorized)
+		s.output(c, codeErrAuthFailed, nil, http.StatusUnauthorized)
 		return
 	}
 	token := uuid.NewString()
@@ -718,16 +718,16 @@ func (s *HttpServer) handleLogin(c *gin.Context) {
 		UserID: user.ID,
 	}
 	if err := s.sessionStore.CreateSession(session); err != nil {
-		s.output(c, codeErrCreateSessionFailed, http.StatusInternalServerError)
+		s.output(c, codeErrCreateSessionFailed, nil, http.StatusInternalServerError)
 		return
 	}
-	s.output(c, codeSuccess, gin.H{"token": token})
+	s.output(c, codeSuccess, gin.H{"token": token}, http.StatusCreated)
 }
 
 func (s *HttpServer) handleLogout(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	if err := s.sessionStore.DeleteSession(token); err != nil {
-		s.output(c, codeErrAuthFailed, http.StatusUnauthorized)
+		s.output(c, codeErrAuthFailed, nil, http.StatusUnauthorized)
 		return
 	}
 	s.output(c, codeSuccess, "logged out")
@@ -737,12 +737,12 @@ func (s *HttpServer) handleVerifyToken(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	session, err := s.sessionStore.GetSession(token)
 	if err != nil {
-		s.output(c, codeErrAuthFailed, http.StatusUnauthorized)
+		s.output(c, codeErrAuthFailed, nil, http.StatusUnauthorized)
 		return
 	}
 	user, err := s.userStore.GetUserByID(session.UserID)
 	if err != nil || user.IsArchived {
-		s.output(c, codeErrUserNotFound, http.StatusUnauthorized)
+		s.output(c, codeErrUserNotFound, nil, http.StatusUnauthorized)
 		return
 	}
 	s.output(c, codeSuccess, user)

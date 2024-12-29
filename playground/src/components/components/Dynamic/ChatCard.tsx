@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 
 const ChatCard: React.FC = () => {
   return (
@@ -16,7 +16,7 @@ const ChatCard: React.FC = () => {
       />
       <button className="send-button">Send</button>
     </div>
-  );
-};
+  )
+}
 
-export default ChatCard;
+export default ChatCard

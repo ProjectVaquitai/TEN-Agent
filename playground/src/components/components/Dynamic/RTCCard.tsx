@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 
 const RTCCard: React.FC = () => {
   return (
@@ -8,7 +8,7 @@ const RTCCard: React.FC = () => {
       <h2>Real-Time Communication</h2>
       {/* Add RTC functionalities here */}
     </div>
-  );
-};
+  )
+}
 
-export default RTCCard;
+export default RTCCard

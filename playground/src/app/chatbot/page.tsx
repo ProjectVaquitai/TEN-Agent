@@ -1,23 +1,23 @@
-"use client";
+"use client"
 
-import dynamic from "next/dynamic";
-import AuthInitializer from "@/components/authInitializer";
-import { useAppSelector, EMobileActiveTab } from "@/common";
-import Header from "@/components/Layout/Header";
-import Action from "@/components/Layout/Action";
-import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic"
+import AuthInitializer from "@/components/authInitializer"
+import { useAppSelector, EMobileActiveTab } from "@/common"
+import Header from "@/components/Layout/Header"
+import Action from "@/components/Layout/Action"
+import { cn } from "@/lib/utils"
 
 const DynamicRTCCard = dynamic(() => import("@/components/Dynamic/RTCCard"), {
   ssr: false,
-});
+})
 const DynamicChatCard = dynamic(() => import("@/components/Chat/ChatCard"), {
   ssr: false,
-});
+})
 
 export default function Chatbot() {
   const mobileActiveTab = useAppSelector(
-    (state) => state.global.mobileActiveTab
-  );
+    (state) => state.global.mobileActiveTab,
+  )
 
   return (
     <AuthInitializer>
@@ -30,7 +30,7 @@ export default function Chatbot() {
               "m-0 w-full rounded-b-lg bg-[#181a1d] md:w-[480px] md:rounded-lg",
               {
                 ["hidden md:block"]: mobileActiveTab === EMobileActiveTab.CHAT,
-              }
+              },
             )}
           />
           <DynamicChatCard
@@ -38,11 +38,11 @@ export default function Chatbot() {
               "m-0 w-full rounded-b-lg bg-[#181a1d] md:rounded-lg",
               {
                 ["hidden md:block"]: mobileActiveTab === EMobileActiveTab.AGENT,
-              }
+              },
             )}
           />
         </div>
       </div>
     </AuthInitializer>
-  );
+  )
 }
