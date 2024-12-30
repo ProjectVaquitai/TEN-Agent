@@ -2,7 +2,6 @@ services:
   ten_agent_dev:
     build:
       context: .
-      dockerfile: Dockerfile.dev
     container_name: ten_agent_dev
     platform: linux/amd64
     tty: true
@@ -25,8 +24,7 @@ services:
       - ten_agent_network
   ten_agent_playground:
     build:
-      context: .
-      dockerfile: Dockerfile.playground
+      context: ./playground
     container_name: ten_agent_playground
     restart: always
     ports:
@@ -36,18 +34,18 @@ services:
     environment:
       - AGENT_SERVER_URL=http://ten_agent_dev:8080
       - TEN_DEV_SERVER_URL=http://ten_agent_dev:49483
-  ten_agent_demo:
-    build:
-      context: .
-      dockerfile: Dockerfile.demo
-    container_name: ten_agent_demo
-    restart: always
-    ports:
-      - "3002:3000"
-    networks:
-      - ten_agent_network
-    environment:
-      - AGENT_SERVER_URL=http://ten_agent_dev:8080
+  # ten_agent_demo:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.demo
+  #   container_name: ten_agent_demo
+  #   restart: always
+  #   ports:
+  #     - "3002:3000"
+  #   networks:
+  #     - ten_agent_network
+  #   environment:
+  #     - AGENT_SERVER_URL=http://ten_agent_dev:8080
   # ten_graph_designer:
   #   image: ghcr.io/ten-framework/ten_graph_designer:dde0ff1
   #   container_name: ten_graph_designer

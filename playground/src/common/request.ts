@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { genUUID } from "./utils"
 import { Language } from "@/types"
 import axios from "axios"
