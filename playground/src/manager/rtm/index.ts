@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import AgoraRTM, { type RTMClient, type RTMStreamChannel } from "agora-rtm"
+import AgoraRTM, { type RTMClient } from "agora-rtm"
 import { AGEventEmitter } from "../events"
-import { apiGenAgoraData } from "@/common"
 import { type IRTMTextItem, ERTMTextType } from "@/types"
 
 export interface IRtmEvents {

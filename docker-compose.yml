@@ -1,6 +1,8 @@
 services:
   ten_agent_dev:
-    image: ghcr.io/ten-framework/ten_agent_build:0.2.4
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     container_name: ten_agent_dev
     platform: linux/amd64
     tty: true
@@ -15,10 +17,16 @@ services:
     working_dir: /app
     env_file:
       - .env
+    environment:
+      - MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/tenagent?authSource=admin
+    depends_on:
+      - mongodb
     networks:
       - ten_agent_network
   ten_agent_playground:
-    image: ghcr.io/ten-framework/ten_agent_playground:0.6.2-36-gd5dba93
+    build:
+      context: .
+      dockerfile: Dockerfile.playground
     container_name: ten_agent_playground
     restart: always
     ports:
@@ -29,7 +37,9 @@ services:
       - AGENT_SERVER_URL=http://ten_agent_dev:8080
       - TEN_DEV_SERVER_URL=http://ten_agent_dev:49483
   ten_agent_demo:
-    image: ghcr.io/ten-framework/ten_agent_demo:0.6.2-36-gd5dba93
+    build:
+      context: .
+      dockerfile: Dockerfile.demo
     container_name: ten_agent_demo
     restart: always
     ports:
@@ -48,6 +58,30 @@ services:
   #     - ten_agent_network
   #   environment:
   #     - TEN_DEV_SERVER_URL=http://ten_agent_dev:49483
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "${MONGODB_PORT}:27017"
+    command: ["mongod", "--auth"] # Add this line to enable authentication
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+    networks:
+      - ten_agent_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 300s
+      timeout: 10s
+      retries: 5
 networks:
   ten_agent_network:
     driver: bridge
+volumes:
+  mongodb_data:
+    driver: local
