@@ -2,6 +2,7 @@ services:
   ten_agent_dev:
     build:
       context: .
+      dockerfile: Dockerfile
     container_name: ten_agent_dev
     platform: linux/amd64
     tty: true
@@ -11,7 +12,6 @@ services:
       - "${GRAPH_DESIGNER_SERVER_PORT}:${GRAPH_DESIGNER_SERVER_PORT}"
       - "${SERVER_PORT}:${SERVER_PORT}"
     volumes:
-      - ./:/app
       - ${LOG_PATH}:${LOG_PATH}
     working_dir: /app
     env_file:
