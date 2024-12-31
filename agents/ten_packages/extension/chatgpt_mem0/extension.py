@@ -7,7 +7,6 @@ import asyncio
 import json
 import traceback
 from typing import Iterable
-from langfuse import Langfuse
 from .my_mem0 import MyMemManager
 import time
 import threading
@@ -41,16 +40,6 @@ DATA_IN_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_IN_TEXT_DATA_PROPERTY_IS_FINAL = "is_final"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT_END_OF_SEGMENT = "end_of_segment"
-
-LANGFUSE_SECRET_KEY="sk-lf-ad715cab-1e6d-40cf-8dd8-f4893f031465"
-LANGFUSE_PUBLIC_KEY="pk-lf-7c52ac2f-908a-402b-9372-f88320c45c3c"
-LANGFUSE_HOST="https://us.cloud.langfuse.com"
-
-langfuse = Langfuse(
-  secret_key="sk-lf-ad715cab-1e6d-40cf-8dd8-f4893f031465",
-  public_key="pk-lf-7c52ac2f-908a-402b-9372-f88320c45c3c",
-  host="https://us.cloud.langfuse.com"
-)
 
 class ChatGPTMem0Extension(AsyncLLMBaseExtension):
     def __init__(self, name: str):
