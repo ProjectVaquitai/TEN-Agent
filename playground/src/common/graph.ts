@@ -173,7 +173,7 @@ class GraphEditor {
       throw new Error(`Node "${nodeName}" not found in graph "${graph.id}".`)
     }
     const node = graph.nodes.splice(nodeIndex, 1)[0]
-    return node
+    return node;
   }
 
   /**
@@ -306,7 +306,7 @@ class GraphEditor {
     protocolName: string, // Explicit name of the protocol object
   ): void {
     const [srcGroup, srcExtension] = source.split(".")
-    const connection = this.findConnection(graph, srcGroup, srcExtension)
+    let connection = this.findConnection(graph, srcGroup, srcExtension)
 
     if (connection) {
       // Add or update destination in the existing connection
@@ -357,8 +357,8 @@ class GraphEditor {
     }
   }
   /**
-   * Remove a connection from the graph across all protocols (cmd, data, audio_frame, video_frame)
-   */
+ * Remove a connection from the graph across all protocols (cmd, data, audio_frame, video_frame)
+ */
   static removeConnection(
     graph: Graph,
     source: string,
@@ -371,73 +371,68 @@ class GraphEditor {
       (conn) =>
         conn.extensionGroup === source.split(".")[0] &&
         conn.extension === source.split(".")[1],
-    )
+    );
 
     if (connectionIndex === -1) {
-      console.warn(
-        `Source "${source}" not found in the graph. Operation ignored.`,
-      )
-      return // Exit the function if the connection does not exist
+      console.warn(`Source "${source}" not found in the graph. Operation ignored.`);
+      return; // Exit the function if the connection does not exist
     }
 
-    const connection = graph.connections[connectionIndex]
+    const connection = graph.connections[connectionIndex];
 
     // If protocolLabel is provided, handle protocol-specific removal
     if (protocolLabel) {
-      const protocolField = protocolLabel.toLowerCase() as keyof Connection
+      const protocolField = protocolLabel.toLowerCase() as keyof Connection;
       const protocolArray = connection[protocolField] as Array<
         Command | Data | AudioFrame | VideoFrame
-      >
+      >;
 
       if (!protocolArray) {
         console.warn(
-          `Protocol "${protocolLabel}" does not exist for source "${source}". Operation ignored.`,
-        )
-        return // Exit the function if the protocol does not exist
+          `Protocol "${protocolLabel}" does not exist for source "${source}". Operation ignored.`
+        );
+        return; // Exit the function if the protocol does not exist
       }
 
       const protocolObjectIndex = protocolArray.findIndex(
         (item) => item.name === protocolName,
-      )
+      );
 
       if (protocolObjectIndex === -1) {
         console.warn(
-          `Protocol object with name "${protocolName}" not found in protocol "${protocolLabel}". Operation ignored.`,
-        )
-        return // Exit the function if the protocol object does not exist
+          `Protocol object with name "${protocolName}" not found in protocol "${protocolLabel}". Operation ignored.`
+        );
+        return; // Exit the function if the protocol object does not exist
       }
 
       if (destination) {
         // Remove a specific destination
         protocolArray[protocolObjectIndex].dest = protocolArray[
           protocolObjectIndex
-        ].dest.filter((dest) => dest.extension !== destination.split(".")[1])
+        ].dest.filter((dest) => dest.extension !== destination.split(".")[1]);
 
         // Remove the protocol object if it has no destinations
         if (protocolArray[protocolObjectIndex].dest.length === 0) {
-          protocolArray.splice(protocolObjectIndex, 1)
+          protocolArray.splice(protocolObjectIndex, 1);
         }
       } else {
         // Remove the entire protocol object
-        protocolArray.splice(protocolObjectIndex, 1)
+        protocolArray.splice(protocolObjectIndex, 1);
       }
     } else {
       // If no protocolLabel is provided, remove the entire connection
-      graph.connections.splice(connectionIndex, 1)
+      graph.connections.splice(connectionIndex, 1);
     }
 
     // Clean up empty connections
-    GraphEditor.removeEmptyConnections(graph)
+    GraphEditor.removeEmptyConnections(graph);
   }
 
   static findNode(graph: Graph, nodeName: string): Node | null {
     return graph.nodes.find((node) => node.name === nodeName) || null
   }
 
-  static findNodeByPredicate(
-    graph: Graph,
-    predicate: (node: Node) => boolean,
-  ): Node | null {
+  static findNodeByPredicate(graph: Graph, predicate: (node: Node) => boolean): Node | null {
     return graph.nodes.find(predicate) || null
   }
 
@@ -460,23 +455,23 @@ class GraphEditor {
       // Filter each protocol to remove empty destination objects
       connection.cmd = Array.isArray(connection.cmd)
         ? connection.cmd.filter((cmd) => cmd.dest?.length > 0)
-        : undefined
-      if (!connection.cmd?.length) delete connection.cmd
+        : undefined;
+      if (!connection.cmd?.length) delete connection.cmd;
 
       connection.data = Array.isArray(connection.data)
         ? connection.data.filter((data) => data.dest?.length > 0)
-        : undefined
-      if (!connection.data?.length) delete connection.data
+        : undefined;
+      if (!connection.data?.length) delete connection.data;
 
       connection.audio_frame = Array.isArray(connection.audio_frame)
         ? connection.audio_frame.filter((audio) => audio.dest?.length > 0)
-        : undefined
-      if (!connection.audio_frame?.length) delete connection.audio_frame
+        : undefined;
+      if (!connection.audio_frame?.length) delete connection.audio_frame;
 
       connection.video_frame = Array.isArray(connection.video_frame)
         ? connection.video_frame.filter((video) => video.dest?.length > 0)
-        : undefined
-      if (!connection.video_frame?.length) delete connection.video_frame
+        : undefined;
+      if (!connection.video_frame?.length) delete connection.video_frame;
 
       // Check if at least one protocol remains
       return (
@@ -484,9 +479,11 @@ class GraphEditor {
         connection.data?.length ||
         connection.audio_frame?.length ||
         connection.video_frame?.length
-      )
-    })
+      );
+    });
   }
+
+
 
   static removeNodeAndConnections(graph: Graph, addon: string): void {
     // Remove the node
@@ -495,19 +492,13 @@ class GraphEditor {
     // Remove all connections involving this node
     graph.connections = graph.connections.filter((connection) => {
       const isSource =
-        connection.extensionGroup + "." + connection.extension ===
-        `${node.extensionGroup}.${node.name}`
+        connection.extensionGroup + "." + connection.extension === `${node.extensionGroup}.${node.name}`
       const protocols = ["cmd", "data", "audio_frame", "video_frame"] as const
 
       protocols.forEach((protocol) => {
         if (connection[protocol]) {
           connection[protocol] = connection[protocol]?.filter(
-            (item) =>
-              !item.dest.some(
-                (dest) =>
-                  dest.extension === node.name &&
-                  dest.extensionGroup === node.extensionGroup,
-              ),
+            (item) => !item.dest.some((dest) => dest.extension === node.name && dest.extensionGroup === node.extensionGroup),
           )
         }
       })
@@ -522,14 +513,14 @@ class GraphEditor {
       )
     })
     // Clean up empty connections
-    GraphEditor.removeEmptyConnections(graph)
+    GraphEditor.removeEmptyConnections(graph);
   }
 
   /**
-   * Link a tool to an LLM node by creating the appropriate connections.
-   */
+ * Link a tool to an LLM node by creating the appropriate connections.
+ */
   static linkTool(graph: Graph, llmNode: Node, toolNode: Node): void {
-    const llmExtensionGroup = llmNode.extensionGroup
+    const llmExtensionGroup = llmNode.extensionGroup;
 
     // Create the connection from the LLM node to the tool node
     GraphEditor.addOrUpdateConnection(
@@ -537,8 +528,8 @@ class GraphEditor {
       `${llmExtensionGroup}.${llmNode.name}`,
       `${toolNode.extensionGroup}.${toolNode.name}`,
       GraphConnProtocol.CMD,
-      "tool_call",
-    )
+      "tool_call"
+    );
 
     // Create the connection from the tool node back to the LLM node
     GraphEditor.addOrUpdateConnection(
@@ -546,12 +537,10 @@ class GraphEditor {
       `${toolNode.extensionGroup}.${toolNode.name}`,
       `${llmExtensionGroup}.${llmNode.name}`,
       GraphConnProtocol.CMD,
-      "tool_register",
-    )
+      "tool_register"
+    );
 
-    const rtcModule = GraphEditor.findNodeByPredicate(graph, (node) =>
-      node.addon.includes("rtc"),
-    )
+    const rtcModule = GraphEditor.findNodeByPredicate(graph, (node) => node.addon.includes("rtc"));
     if (toolNode.addon.includes("vision") && rtcModule) {
       // Create the connection from the RTC node to the tool node to deliver video frame
       GraphEditor.addOrUpdateConnection(
@@ -559,29 +548,24 @@ class GraphEditor {
         `${rtcModule.extensionGroup}.${rtcModule.name}`,
         `${toolNode.extensionGroup}.${toolNode.name}`,
         GraphConnProtocol.VIDEO_FRAME,
-        "video_frame",
-      )
+        "video_frame"
+      );
     }
   }
 
-  static enableRTCVideoSubscribe(graph: Graph, enabled: boolean): void {
-    const rtcNode = GraphEditor.findNodeByPredicate(graph, (node) =>
-      node.addon.includes("rtc"),
-    )
+  static enableRTCVideoSubscribe(graph: Graph, enabled: Boolean): void {
+    const rtcNode = GraphEditor.findNodeByPredicate(graph, (node) => node.addon.includes("rtc"));
     if (!rtcNode) {
-      throw new Error("RTC node not found in the graph.")
+      throw new Error("RTC node not found in the graph.");
     }
 
     if (enabled) {
       GraphEditor.updateNodeProperty(graph, rtcNode.name, {
         subscribe_video_pix_fmt: 4,
         subscribe_video: true,
-      })
+      });
     } else {
-      GraphEditor.removeNodeProperties(graph, rtcNode.name, [
-        "subscribe_video_pix_fmt",
-        "subscribe_video",
-      ])
+      GraphEditor.removeNodeProperties(graph, rtcNode.name, ["subscribe_video_pix_fmt", "subscribe_video"]);
     }
   }
 }

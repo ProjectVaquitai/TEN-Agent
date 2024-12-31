@@ -10,8 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "proto": "pbjs -t json-module -w commonjs -o src/protobuf/SttMessage.js src/protobuf/SttMessage.proto",
-    "format": "prettier --write ."
+    "proto": "pbjs -t json-module -w commonjs -o src/protobuf/SttMessage.js src/protobuf/SttMessage.proto"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -58,7 +57,7 @@
     "eslint": "^8",
     "eslint-config-next": "^15.0.3",
     "postcss": "^8.4.47",
-    "prettier": "^3.4.2",
+    "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "protobufjs-cli": "^1.1.2",
     "sass": "^1.77.5",

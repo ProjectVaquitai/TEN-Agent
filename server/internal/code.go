@@ -25,13 +25,6 @@ var (
 	codeErrUpdateWorkerFailed    = NewCode("10104", "update worker failed")
 	codeErrReadDirectoryFailed   = NewCode("10105", "read directory failed")
 	codeErrReadFileFailed        = NewCode("10106", "read file failed")
-
-	codeErrCreateUserFailed = NewCode("10200", "create user failed")
-	codeErrUserNotFound     = NewCode("10201", "user not found")
-	codeErrUpdateUserFailed = NewCode("10202", "update user failed")
-	codeErrAuthFailed       = NewCode("10203", "auth failed")
-
-	codeErrCreateSessionFailed = NewCode("10300", "create session failed")
 )
 
 func NewCode(code string, msg string) *Code {

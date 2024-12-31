@@ -36,14 +36,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useAppDispatch, useAppSelector } from "@/common"
-import { cn } from "@/lib/utils"
 import {
-  SettingsIcon,
-  LoaderCircleIcon,
-  BoxesIcon,
-  Trash2Icon,
-} from "lucide-react"
+  useAppDispatch,
+  useAppSelector,
+} from "@/common"
+import { cn } from "@/lib/utils"
+import { SettingsIcon, LoaderCircleIcon, BoxesIcon, Trash2Icon } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -57,16 +55,12 @@ export function RemotePropertyCfgSheet() {
   const graphName = useAppSelector((state) => state.global.selectedGraphId)
 
   const [selectedExtension, setSelectedExtension] = React.useState<string>("")
-  const selectedExtensionNode = selectedGraph?.nodes.find(
-    (n) => n.name === selectedExtension,
-  )
+  const selectedExtensionNode = selectedGraph?.nodes.find(n => n.name === selectedExtension)
   const addonModules = useAppSelector((state) => state.global.addonModules)
   const selectedAddonModule = addonModules.find(
     (module) => module.name === selectedExtensionNode?.addon,
   )
-  const hasProperty =
-    !!selectedAddonModule?.api?.property &&
-    Object.keys(selectedAddonModule?.api?.property).length > 0
+  const hasProperty = !!selectedAddonModule?.api?.property && Object.keys(selectedAddonModule?.api?.property).length > 0
 
   return (
     <Sheet>
@@ -82,8 +76,8 @@ export function RemotePropertyCfgSheet() {
         <SheetHeader>
           <SheetTitle>Properties Setting</SheetTitle>
           <SheetDescription>
-            You can adjust extension properties for selected graph here, the
-            values will be written into property.json file when you save.
+            You can adjust extension properties for selected graph here, the values will be
+            written into property.json file when you save.
           </SheetDescription>
         </SheetHeader>
 
@@ -97,51 +91,47 @@ export function RemotePropertyCfgSheet() {
               <SelectValue placeholder="Select extension" />
             </SelectTrigger>
             <SelectContent>
-              {selectedGraph
-                ? selectedGraph.nodes.map((node) => (
-                    <SelectItem key={node.name} value={node.name}>
-                      {node.name}
-                    </SelectItem>
-                  ))
-                : null}
+              {selectedGraph ? (selectedGraph.nodes).map((node) => (
+                <SelectItem key={node.name} value={node.name}>
+                  {node.name}
+                </SelectItem>
+              )) : null}
             </SelectContent>
           </Select>
         </div>
 
-        {hasProperty ? (
-          selectedExtensionNode?.["property"] && (
-            <GraphCfgForm
-              selectedAddonModule={selectedAddonModule}
-              selectedExtension={selectedExtension}
-              key={`${graphName}-${selectedExtension}`}
-              initialData={selectedExtensionNode?.["property"] || {}}
-              metadata={
-                addonModules.find(
-                  (module) => module.name === selectedExtensionNode?.addon,
-                )?.api?.property || {}
+        {hasProperty ? selectedExtensionNode?.["property"] && (
+          <GraphCfgForm
+            selectedAddonModule={selectedAddonModule}
+            selectedExtension={selectedExtension}
+            key={`${graphName}-${selectedExtension}`}
+            initialData={
+              selectedExtensionNode?.["property"] || {}
+            }
+            metadata={
+              addonModules.find(
+                (module) => module.name === selectedExtensionNode?.addon,
+              )?.api?.property || {}
+            }
+            onUpdate={async (data) => {
+              // clone the overridenProperties
+              const selectedGraphCopy: Graph = JSON.parse(JSON.stringify(selectedGraph))
+              const nodes = selectedGraphCopy?.nodes || []
+              let needUpdate = false
+              for (const node of nodes) {
+                if (node.name === selectedExtension) {
+                  node.property = data
+                  needUpdate = true
+                }
               }
-              onUpdate={async (data) => {
-                // clone the overridenProperties
-                const selectedGraphCopy: Graph = JSON.parse(
-                  JSON.stringify(selectedGraph),
-                )
-                const nodes = selectedGraphCopy?.nodes || []
-                let needUpdate = false
-                for (const node of nodes) {
-                  if (node.name === selectedExtension) {
-                    node.property = data
-                    needUpdate = true
-                  }
-                }
-                if (needUpdate) {
-                  await updateGraph(selectedGraphCopy.id, selectedGraphCopy)
-                  toast.success("Properties updated", {
-                    description: `Graph: ${graphName}, Extension: ${selectedExtension}`,
-                  })
-                }
-              }}
-            />
-          )
+              if (needUpdate) {
+                await updateGraph(selectedGraphCopy.id, selectedGraphCopy)
+                toast.success("Properties updated", {
+                  description: `Graph: ${graphName}, Extension: ${selectedExtension}`,
+                })
+              }
+            }}
+          />
         ) : (
           <SheetDescription>
             No properties found for the selected extension.
@@ -152,21 +142,21 @@ export function RemotePropertyCfgSheet() {
   )
 }
 
+
+
 export function RemotePropertyAddCfgSheet({
   selectedExtension,
   extensionNodeData,
   onUpdate,
 }: {
-  selectedExtension: string
-  extensionNodeData: Record<string, string | number | boolean | null>
+  selectedExtension: string,
+  extensionNodeData: Record<string, string | number | boolean | null>,
   onUpdate: (data: string) => void
 }) {
   const dispatch = useAppDispatch()
   const { selectedGraph } = useGraphs()
 
-  const selectedExtensionNode = selectedGraph?.nodes.find(
-    (n) => n.name === selectedExtension,
-  )
+  const selectedExtensionNode = selectedGraph?.nodes.find(n => n.name === selectedExtension)
   const addonModules = useAppSelector((state) => state.global.addonModules)
   const selectedAddonModule = addonModules.find(
     (module) => module.name === selectedExtensionNode?.addon,
@@ -183,25 +173,17 @@ export function RemotePropertyAddCfgSheet({
 
   return (
     <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
-      <SheetTrigger asChild>
+      <SheetTrigger asChild
+      >
         <div>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => {
-              setSheetOpen(true)
-            }}
-          >
-            Add
-          </Button>
+          <Button type="button" variant="secondary" onClick={() => { setSheetOpen(true) }}>Add</Button>
         </div>
       </SheetTrigger>
       <SheetContent className="w-[400px] overflow-y-auto sm:w-[540px]">
         <SheetHeader>
           <SheetTitle>Property Add</SheetTitle>
           <SheetDescription>
-            You can add a property into a graph extension node and configure its
-            value.
+            You can add a property into a graph extension node and configure its value.
           </SheetDescription>
         </SheetHeader>
         {hasRemainingProperties ? (
@@ -212,7 +194,7 @@ export function RemotePropertyAddCfgSheet({
               }}
               value={selectedProperty}
             >
-              <SelectTrigger className="my-4 w-full">
+              <SelectTrigger className="w-full my-4">
                 <SelectValue placeholder="Select a property" />
               </SelectTrigger>
               <SelectContent>
@@ -224,34 +206,25 @@ export function RemotePropertyAddCfgSheet({
               </SelectContent>
             </Select>
 
-            <Button
-              type="submit"
-              onClick={() => {
-                setSheetOpen(false)
-                if (selectedProperty !== "") {
-                  onUpdate(selectedProperty)
-                  setSelectedProperty("")
-                }
-              }}
-            >
-              Add
-            </Button>
+            <Button type="submit" onClick={() => {
+              setSheetOpen(false)
+              if (selectedProperty !== "") {
+                onUpdate(selectedProperty)
+                setSelectedProperty("")
+              }
+            }}>Add</Button>
           </>
         ) : (
           <>
             <SheetDescription className="my-4">
               No remaining properties to add.
             </SheetDescription>
-            <Button
-              type="submit"
-              onClick={() => {
-                setSheetOpen(false)
-              }}
-            >
-              OK
-            </Button>
+            <Button type="submit" onClick={() => {
+              setSheetOpen(false)
+            }}>OK</Button>
           </>
         )}
+
       </SheetContent>
     </Sheet>
   )
@@ -298,15 +271,15 @@ const GraphCfgForm = ({
   metadata,
   onUpdate,
 }: {
-  selectedExtension: string
-  selectedAddonModule: AddonDef.Module | undefined
+  selectedExtension: string,
+  selectedAddonModule: AddonDef.Module | undefined,
   initialData: Record<string, string | number | boolean | null>
   metadata: Record<string, { type: string }>
   onUpdate: (data: Record<string, string | number | boolean | null>) => void
 }) => {
   const formSchema = z.record(
     z.string(),
-    z.union([z.string(), z.number(), z.boolean(), z.null()]),
+    z.union([z.string(), z.number(), z.boolean(), z.null()])
   )
 
   const [formData, setFormData] = useState(initialData)
@@ -320,11 +293,10 @@ const GraphCfgForm = ({
     const convertedData = Object.entries(data).reduce(
       (acc, [key, value]) => {
         const type = metadata[key]?.type || "string"
-        acc[key] =
-          value === "" ? defaultTypeValue(type) : convertToType(value, type)
+        acc[key] = value === "" ? defaultTypeValue(type) : convertToType(value, type)
         return acc
       },
-      {} as Record<string, string | number | boolean | null>,
+      {} as Record<string, string | number | boolean | null>
     )
     onUpdate(convertedData)
   }
@@ -344,7 +316,7 @@ const GraphCfgForm = ({
     {} as Record<
       string,
       { value: string | number | boolean | null; type: string }
-    >,
+    >
   )
 
   return (
@@ -358,7 +330,7 @@ const GraphCfgForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{key}</FormLabel>
-                <div className="flex items-center justify-between">
+                <div className="flex justify-between items-center">
                   <FormControl>
                     {type === "bool" ? (
                       <div className="flex items-center space-x-2">
@@ -384,7 +356,7 @@ const GraphCfgForm = ({
                       buttonVariants({ variant: "outline", size: "icon" }),
                       "bg-transparent",
                       "ml-2",
-                      "cursor-pointer",
+                      "cursor-pointer"
                     )}
                     onClick={() => handleDelete(key)} // Delete action
                   >
@@ -400,17 +372,17 @@ const GraphCfgForm = ({
             selectedExtension={selectedExtension}
             extensionNodeData={formData}
             onUpdate={(key: string) => {
-              const defaultProperty = selectedAddonModule?.defaultProperty || {}
+              let defaultProperty = selectedAddonModule?.defaultProperty || {}
               let defaultValue = defaultProperty[key]
 
               if (defaultValue === undefined) {
-                const schema = selectedAddonModule?.api?.property || {}
-                const schemaType = schema[key]?.type
+                let schema = selectedAddonModule?.api?.property || {}
+                let schemaType = schema[key]?.type
                 if (schemaType === "bool") {
                   defaultValue = false
                 }
               }
-              const updatedData = { ...formData }
+              let updatedData = { ...formData }
               updatedData[key] = defaultValue
               setFormData(updatedData)
               form.reset(updatedData)

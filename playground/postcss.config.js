@@ -9,4 +9,4 @@ module.exports = {
       include: /\/src\/platform\/mobile\//,
     },
   },
-}
+};

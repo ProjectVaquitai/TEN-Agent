@@ -1,7 +1,6 @@
 package main
 
 import (
-	"app/internal"
 	"fmt"
 	"log/slog"
 	"os"
@@ -10,6 +9,8 @@ import (
 	"syscall"
 
 	"github.com/joho/godotenv"
+
+	"app/internal"
 )
 
 func main() {
