@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { EventHandler } from "./types"
 
 export class AGEventEmitter<T> {
@@ -43,7 +45,9 @@ export class AGEventEmitter<T> {
         // cb exception should not affect other callbacks
         const error = e as Error
         const details = error.stack || error.message
-        console.error(`[event] handling event ${evt.toString()} fail: ${details}`)
+        console.error(
+          `[event] handling event ${evt.toString()} fail: ${details}`,
+        )
       }
     }
     return this
