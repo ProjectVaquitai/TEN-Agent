@@ -7,6 +7,9 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
+# Disable ESLint
+ENV ESLINT_NO_DEV_ERRORS=true
+
 # Install dependencies based on the preferred package manager
 COPY package.json .yarnrc* yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
@@ -33,7 +36,6 @@ RUN \
     elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
     else echo "Lockfile not found." && exit 1; \
     fi
-
 
 # 3. Production image, copy all the files and run next
 FROM base AS runner

@@ -1,11 +1,7 @@
 import * as React from "react"
 import {
-  useAppDispatch,
   useAutoScroll,
-  LANGUAGE_OPTIONS,
   useAppSelector,
-  GRAPH_OPTIONS,
-  isRagGraph,
 } from "@/common"
 import { EMessageType, type IChatItem } from "@/types"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -25,7 +21,7 @@ export default function MessageList(props: { className?: string }) {
       ref={containerRef}
       className={cn("flex-grow space-y-2 overflow-y-auto p-4", className)}
     >
-      {chatItems.map((item, index) => {
+      {chatItems.map((item) => {
         return <MessageItem data={item} key={item.time} />
       })}
     </div>

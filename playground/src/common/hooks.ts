@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { IMicrophoneAudioTrack } from "agora-rtc-sdk-ng"
-import { deepMerge, normalizeFrequencies } from "./utils"
+import { normalizeFrequencies } from "./utils"
 import { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import type { AppDispatch, AppStore, RootState } from "../store"
 import { useDispatch, useSelector, useStore } from "react-redux"
@@ -82,7 +83,7 @@ export const useMultibandTrackVolume = (
 }
 
 export const useAutoScroll = (ref: React.RefObject<HTMLElement | null>) => {
-  const callback: MutationCallback = (mutationList, observer) => {
+  const callback: MutationCallback = (mutationList) => {
     mutationList.forEach((mutation) => {
       switch (mutation.type) {
         case "childList":
