@@ -254,7 +254,7 @@ class LangfuseTracerExtension(Extension):
         pil_image = pil_image.convert("RGB")
 
         save_path = os.path.join('output_images', self.channel_name + '_' + datetime.datetime.now().strftime(
-            "%Y-%m-%d_%H:%M:%S__%f") + '.jpg')
+            "%Y-%m-%d_%H:%M:%S_%f") + '.jpg')
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         pil_image.save(save_path, format="JPEG")
         image_cos_url = upload_image_to_cos(save_path)
