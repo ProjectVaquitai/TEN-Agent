@@ -40,6 +40,7 @@ DATA_IN_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_IN_TEXT_DATA_PROPERTY_IS_FINAL = "is_final"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT_END_OF_SEGMENT = "end_of_segment"
+PROPERTY_CHANNEL_NAME="channel"
 
 class ChatGPTMem0Extension(AsyncLLMBaseExtension):
     def __init__(self, name: str):
@@ -51,6 +52,7 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
         self.sentence_fragment = ""
         self.toolcall_future = None
         self.users_count = 0
+        self.channel_name = "default_channel"
 
     async def on_init(self, ten_env: AsyncTenEnv) -> None:
         ten_env.log_info("on_init")
@@ -59,6 +61,11 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
     async def on_start(self, ten_env: AsyncTenEnv) -> None:
         ten_env.log_info("on_start")
         await super().on_start(ten_env)
+        
+        try:
+            self.channel_name = ten_env.get_property_string(PROPERTY_CHANNEL_NAME)
+        except Exception as err:
+            ten_env.error(f"GetProperty channel failed, err: {err}")
 
         self.config = OpenAIChatGPTConfig.create(ten_env=ten_env)
 
@@ -137,7 +144,7 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
 
         ten_env.log_info(f"OnData input text: [{input_text}]")
         try:
-            memory_text = self.memory_manager.search(input_text, user_id="chenminghua")
+            memory_text = self.memory_manager.search(input_text, user_id=self.channel_name)
             prompt = f"User input: {input_text}\nPrevious memories: {memory_text}"
             ten_env.log_info(f"Prompt: {prompt}")
             
@@ -162,7 +169,7 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
                 mem_time = time.time()
                 ten_env.log_info(f"Adding Memory")
                 try:
-                    self.memory_manager.memory.add(input_text, user_id="chenminghua")
+                    self.memory_manager.memory.add(input_text, user_id=self.channel_name)
                 except Exception as mem_err:
                     ten_env.log_warn(f"Memory addition failed: {str(mem_err)}")
                 ten_env.log_info(f"Adding Cost:{round(time.time() - mem_time, 2)}")

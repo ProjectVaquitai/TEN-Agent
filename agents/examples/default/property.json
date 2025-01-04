@@ -1585,7 +1585,10 @@
             "type": "extension",
             "name": "langfuse_tracer",
             "addon": "langfuse_tracer",
-            "extension_group": "default"
+            "extension_group": "default",
+            "property": {
+              "channel": "default_channel"
+            }
           },
           {
             "type": "extension",
