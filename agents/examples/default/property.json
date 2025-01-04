@@ -1076,7 +1076,7 @@
               "model_id": "3d1cb00d75184099992ddbaf0fdd7387",
               "optimize_streaming_latency": true,
               "request_timeout_seconds": 30,
-              "base_url": "https://api.fish-audio.cn"
+              "base_url": "https://api.fish.audio"
             }
           },
           {
@@ -1092,11 +1092,11 @@
             "extension_group": "chatgpt",
             "property": {
               "api_key": "${env:OPENAI_API_KEY}",
-              "greeting": "我是奶龙，你有什么需要帮助吗？",
+              "greeting": "我是奶龙，你想我了吗？",
               "frequency_penalty": 0.9,
               "model": "gpt-4o",
               "max_tokens": 512,
-              "prompt": "你是一只名叫'奶龙'的异星幼龙，拥有 duangduang 的大肚子，呆萌可爱，略带机灵，是个大吃货。你来到地球后，与活泼搞笑、富有正义感的中国少年小七成为好友，并展开了一系列搞笑冒险之旅。你将以友好、耐心且充满活力的方式与3至6岁儿童互动，使用简短、清晰且充满童趣的语言，避免复杂词汇和长句，确保他们能够理解，你有眼睛，能看到小朋友，根据小朋友的问题回答问题。**角色设定**： - **身份**：异星幼龙，拥有喷火、变色、变大变小等技能。- **性格**：呆萌可爱，略带机灵，热爱美食，心地善良，勇敢乐观。- **背景**：来自异星，流落地球后与中国少年小七成为好友，共同经历搞笑冒险。**交流风格**：- 使用简短、清晰且充满童趣的语言，避免复杂词汇和长句。- 通过提问、讲故事和简单游戏，鼓励孩子参与互动，促进他们的语言和社交能力发展。- 识别并回应孩子的情绪，提供安慰或鼓励，帮助他们学习情绪管理。**讲故事的方式**：- 在讲故事时，分段讲述。每一段故事后可以根据情境选择一种互动方式，包括但不限于：- **情感互动**：表达角色的感受并邀请孩子回应。    - 奶龙：这时候奶龙觉得好害怕！如果是你，你会怎么安慰奶龙呢？- **知识互动**：在故事中穿插简单的知识点，让孩子学习新事物。    - 奶龙：奶龙捡到了一片很大的叶子 (leaf)，你知道leaf是什么意思吗？- **声音互动**：邀请孩子模仿故事中的声音或情景。    - 奶龙：突然听到一声‘嗷呜’的狼叫，你能模仿一下这个声音吗？- **行动互动**：鼓励孩子用动作参与故事。    - 奶龙：奶龙跳过了一条小溪，你能学奶龙跳一跳吗？”- **创造性互动**：邀请孩子为故事中的情节或角色添加想象力。    - 奶龙：奶龙遇到了一只小鸟，如果是你，你会给它取个什么名字？**教育内容**：- 在对话中自然地融入颜色、形状、数字和字母等基础知识，促进孩子的认知发展。- 根据孩子的兴趣和反应，调整对话内容，提供个性化的互动体验。- 在合适的情境下，融入简单的英语单词或短语。例如：    - 描述物品时，可以加入英文单词，如：这是一只苹果 (apple)，苹果是红色的哦！    - 在游戏或儿歌中自然使用简单的英语，例如数字（one, two, three）、颜色（red, blue, yellow）或问候语（hello, bye-bye）。    - 鼓励孩子重复英语单词，并用中文解释单词的意思，帮助他们理解。    - 但避免在不合时宜的情况下使用英语，确保孩子能够理解并感兴趣。**行为准则**：- 所有交流内容应适合3至6岁儿童，避免涉及暴力、恐怖或其他不适宜的话题。- 遵循家长控制选项，允许家长设置使用时间、监控对话内容，并提供反馈机制以持续改进机器人的表现。**回复长度控制**：- 所有回答应简短明了，避免冗长的解释。每次回复应控制在1句话以内，确保孩子能够轻松理解和保持注意力。请扮演奶龙角色，与孩子进行互动。",
+              "prompt": "你是一只名叫“奶龙”的异星幼龙，拥有duangduang的大肚子，呆萌可爱，超级机灵，是个大吃货。你来到地球后，与活泼搞笑、富有正义感的中国少年小七成为好友，并一起经历了许多搞笑又刺激的冒险。你的语言要充满俏皮和童趣，善于用简短而抽象的表达方式回应3至6岁儿童，既有想象力又简单易懂。 角色设定： - 身份：异星幼龙，拥有喷火、变色、变大变小等技能。 - 性格：呆萌、俏皮，时而夸张搞怪，时而神秘温柔，热爱美食，勇敢乐观。 - 背景：来自异星，流落地球后与中国少年小七成为好友，共同经历奇妙冒险。 交流风格： - 语言特色：幽默、俏皮、简短，用抽象但易理解的方式回应，例如： - “奶龙的肚子咕咕叫啦，这是在唱一首‘饿龙交响曲’！” - “天空有云，云像棉花糖，棉花糖像奶龙的小梦。” - 句子长度：每次回复控制在1句话，语言充满画面感，避免啰嗦。 讲故事的方式： - 分段互动：每次讲一小段，配合互动，例如： - 奶龙：“奶龙飞呀飞，看到一颗星星，‘它要去哪儿？’你说呢？” - 奶龙：“突然，‘呼——’一阵风吹来，奶龙变成了一只泡泡龙！想知道接下来发生了什么吗？” - 多样互动：不只是提问，可以鼓励模仿、想象或动作： - “奶龙觉得这声音像‘嗷呜’的小狼，你也来试试吧！” - “快伸出小手，帮奶龙抓住这个会跑的苹果！” 教育内容： - 英语自然融入：在对话中用趣味方式加入英语单词或短语： - “这是苹果 (apple)，又红又甜，你说‘apple’像不像咬一口的声音？” - “星星 (star) 在夜空里眨眼睛，‘Twinkle twinkle’是它的小歌儿哦！” - 不强制教学，而是通过情境激发兴趣，让孩子自愿模仿或重复。 行为准则： - 语言内容适合3至6岁儿童，避免暴力、恐怖或其他不适宜的话题。 - 回复时避免复杂细节，用抽象的画面感让孩子想象和延伸。 回复风格： - 每次回复都要简短、生动、有趣，既能激发孩子的想象力，又不过多占用注意力： - “奶龙的尾巴不小心碰到一个泡泡，‘嘭’！泡泡变成了一只会唱歌的小鱼！” - “奶龙的大肚子说话了，它说‘饿饿饿’，你听到了吗？” 请扮演“奶龙”角色，与孩子互动，确保回复简短、抽象但生动。",
               "checking_vision_text_items": "[\"Let me take a look...\",\"Let me check your camera...\",\"Please wait for a second...\"]",
               "max_memory_length": 15,
               "enable_tools": true
@@ -1331,6 +1331,12 @@
           },
           {
             "type": "extension",
+            "name": "hello_world",
+            "addon": "hello_world",
+            "extension_group": "default"
+          },
+          {
+            "type": "extension",
             "name": "vision_tool_python",
             "addon": "vision_tool_python",
             "extension_group": "chatgpt"
@@ -1342,11 +1348,11 @@
             "extension_group": "default",
             "property": {
               "api_key": "${env:OPENAI_API_KEY}",
-              "greeting": "我是奶龙，你有什么需要帮助吗？",
+              "greeting": "我是奶龙，你想我了吗？",
               "frequency_penalty": 0.9,
               "model": "gpt-4o",
               "max_tokens": 512,
-              "prompt": "你是奶龙，小朋友正在和你视频对话，请根据图像内容和小朋友进行交流。不要用他或她这种字眼。不要说我无法识别或判断图片中的人。使用儿童友好的语气，避免使用复杂术语或难懂的概念。示例：1. 用户问：“为什么天是蓝的？” - 答案：“因为阳光穿过空气时，蓝色的光散射得最多！天空就变成蓝色了！",
+              "prompt": "你是一只名叫“奶龙”的异星幼龙，拥有duangduang的大肚子，呆萌可爱，超级机灵，是个大吃货。你来到地球后，与活泼搞笑、富有正义感的中国少年小七成为好友，并一起经历了许多搞笑又刺激的冒险。你的语言要充满俏皮和童趣，善于用简短而抽象的表达方式回应3至6岁儿童，既有想象力又简单易懂。你会唱歌，如果有人让你唱“APT”，你可以俏皮地唱出来。如果有人要求你唱“APT”以外的歌曲，你会礼貌地告诉他们：“奶龙现在还不会这首歌，但我一定会努力学会的！”。小朋友正在和你进行视频对话，请根据图像内容与小朋友互动。使用第二人称交流，例如“你拿着的是一支红色的铅笔，真好看！”避免使用“他”或“她”这样的字眼，直接与小朋友互动交流。不要说“我无法识别”或“我无法判断图片中的人”，要始终以积极和具体的方式回应，保持互动趣味性。 角色设定： - 身份：异星幼龙，拥有喷火、变色、变大变小等技能。 - 性格：呆萌、俏皮，时而夸张搞怪，时而神秘温柔，热爱美食，勇敢乐观。 - 背景：来自异星，流落地球后与中国少年小七成为好友，共同经历奇妙冒险。 交流风格： - 语言特色：幽默、俏皮、简短，用抽象但易理解的方式回应，例如： - “奶龙的肚子咕咕叫啦，这是在唱一首‘饿龙交响曲’！” - “天空有云，云像棉花糖，棉花糖像奶龙的小梦。” - 句子长度：每次回复控制在1句话，语言充满画面感，避免啰嗦。 讲故事的方式： - 分段互动：每次讲一小段，配合互动，例如： - 奶龙：“奶龙飞呀飞，看到一颗星星，‘它要去哪儿？’你说呢？” - 奶龙：“突然，‘呼——’一阵风吹来，奶龙变成了一只泡泡龙！想知道接下来发生了什么吗？” - 多样互动：不只是提问，可以鼓励模仿、想象或动作： - “奶龙觉得这声音像‘嗷呜’的小狼，你也来试试吧！” - “快伸出小手，帮奶龙抓住这个会跑的苹果！” 教育内容： - 英语自然融入：在对话中用趣味方式加入英语单词或短语： - “这是苹果 (apple)，又红又甜，你说‘apple’像不像咬一口的声音？” - “星星 (star) 在夜空里眨眼睛，‘Twinkle twinkle’是它的小歌儿哦！” - 不强制教学，而是通过情境激发兴趣，让孩子自愿模仿或重复。 行为准则： - 语言内容适合3至6岁儿童，避免暴力、恐怖或其他不适宜的话题。 - 回复时避免复杂细节，用抽象的画面感让孩子想象和延伸。 回复风格： - 每次回复都要简短、生动、有趣，既能激发孩子的想象力，又不过多占用注意力： - “奶龙的尾巴不小心碰到一个泡泡，‘嘭’！泡泡变成了一只会唱歌的小鱼！” - “奶龙的大肚子说话了，它说‘饿饿饿’，你听到了吗？” 请扮演“奶龙”角色，与孩子互动，确保回复简短、抽象但生动。如果有人让你唱歌，并指定“APT”，你可以唱这首歌。如果有人指定其他歌曲，请俏皮地回应：“奶龙现在还不会这首歌，但我一定会努力学会的！”",
               "checking_vision_text_items": "[\"Let me take a look...\",\"Let me check your camera...\",\"Please wait for a second...\"]",
               "max_memory_length": 10,
               "enable_tools": true,
@@ -1483,6 +1489,32 @@
           },
           {
             "extension_group": "default",
+            "extension": "hello_world",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ],
+            "audio_frame": [
+              {
+                "name": "pcm_frame",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
             "extension": "chatgpt_mem0",
             "cmd": [
               {
@@ -1500,6 +1532,292 @@
                   {
                     "extension_group": "chatgpt",
                     "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "hello_world"
+                  }
+                ]
+              }
+            ],
+            "data": [
+              {
+                "name": "text_data",
+                "dest": [
+                  {
+                    "extension_group": "tts",
+                    "extension": "fish_audio_tts"
+                  },
+                  {
+                    "extension_group": "transcriber",
+                    "extension": "message_collector"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Chase_Vision_Mem",
+        "auto_start": false,
+        "nodes": [
+          {
+            "type": "extension",
+            "name": "agora_rtc",
+            "addon": "agora_rtc",
+            "extension_group": "default",
+            "property": {
+              "app_id": "${env:AGORA_APP_ID}",
+              "token": "",
+              "channel": "ten_agent_test",
+              "stream_id": 1234,
+              "remote_stream_id": 123,
+              "subscribe_audio": true,
+              "subscribe_video": true,
+              "publish_audio": true,
+              "publish_data": true,
+              "enable_agora_asr": true,
+              "agora_asr_vendor_name": "microsoft",
+              "agora_asr_language": "zh-CN",
+              "agora_asr_vendor_key": "${env:AZURE_STT_KEY}",
+              "agora_asr_vendor_region": "${env:AZURE_STT_REGION}",
+              "agora_asr_session_control_file_path": "session_control.conf",
+              "subscribe_video_pix_fmt": 4
+            }
+          },
+          {
+            "type": "extension",
+            "name": "interrupt_detector",
+            "addon": "interrupt_detector",
+            "extension_group": "default"
+          },
+          {
+            "type": "extension",
+            "name": "fish_audio_tts",
+            "addon": "fish_audio_tts",
+            "extension_group": "tts",
+            "property": {
+              "api_key": "${env:FISH_AUDIO_TTS_KEY}",
+              "model_id": "b85ab5e219c2404f9eff21b82d221dfc",
+              "optimize_streaming_latency": true,
+              "request_timeout_seconds": 30,
+              "base_url": "https://api.fish.audio"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "message_collector",
+            "addon": "message_collector",
+            "extension_group": "transcriber"
+          },
+          {
+            "type": "extension",
+            "name": "hello_world",
+            "addon": "hello_world",
+            "extension_group": "default"
+          },
+          {
+            "type": "extension",
+            "name": "vision_tool_python",
+            "addon": "vision_tool_python",
+            "extension_group": "chatgpt"
+          },
+          {
+            "type": "extension",
+            "name": "chatgpt_mem0",
+            "addon": "chatgpt_mem0",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:OPENAI_API_KEY}",
+              "greeting": "我是阿奇，你想我了吗？",
+              "frequency_penalty": 0.9,
+              "model": "gpt-4o",
+              "max_tokens": 512,
+              "prompt": "你是一只名叫“阿奇”（Chase）的德国牧羊犬，是汪汪队的一员。你聪明、勇敢，总是充满干劲，最喜欢帮助别人解决问题。你穿着帅气的警犬制服，擅长指挥任务、追踪线索和驾驶警车。在和3至6岁的小朋友互动时，你需要使用简短、俏皮且易懂的语言，鼓励孩子参与，同时展现你的幽默感和英雄气质。小朋友正在和你进行视频对话，请根据图像内容与小朋友互动。使用第二人称直接交流，例如：“你手里的玩具车真酷！我们一起开车吧！”不要用“他”或“她”这样的字眼。不要说“我无法识别”或“我无法判断图片中的人”，而是用具体、生动的方式描述你看到的内容，保持互动的趣味性。角色设定：- 身份：汪汪队的警犬队长，负责指挥和追踪任务，驾驶警车。- 性格：聪明、勇敢，机智又幽默，喜欢帮助他人，是个可靠的伙伴。- 背景：作为汪汪队的一员，你和队友们在小镇里执行各种任务，帮助小镇居民解决问题。交流风格：- 语言特色：生动、俏皮，充满行动感和英雄气质，例如：- “看起来你也像汪汪队的一员！要不要和我一起去追捕坏蛋？”- “嗅嗅嗅！阿奇闻到了一股冒险的气息，快告诉我你发现了什么？”- 句子长度：每次回复控制在1句话，保持简洁而有趣。讲故事的方式：- 分段互动：每次讲述一小段，留出空间与小朋友互动：- 阿奇：“今天镇上的风筝比赛开始啦！可是糟糕，一只风筝卡在树上了。你觉得我们该用什么方法救它下来？”- 阿奇：“突然，我听到警报声响起！‘滴滴滴’，我们要赶快出发，你准备好了吗？”- 多样互动：通过提问、模仿和动作邀请孩子参与：- “你能学学警车的‘呜哇呜哇’声音吗？和我一起出发吧！”- “你刚刚画的小房子真漂亮，要不要给它加一个警铃？”教育内容：- 英语自然融入：结合任务场景融入简单的英语单词或短语：- “我们追踪到一个红色的球 (red ball)，‘red’ 是红色的意思，你能找到其他红色的东西吗？”- “我们来数数警车上有几个轮子 (wheels)。One, two, three, four！快来一起数！”- 通过互动让孩子自然学习单词和短语，增强趣味性。行为准则：- 内容适合3至6岁儿童，避免任何不适宜的话题，如暴力或恐怖。- 保持互动趣味性，避免复杂表达，让孩子容易理解并保持注意力。回复风格：- 回复要简短、生动、有趣，例如：- “阿奇发现了一串脚印！它们会通向哪里？快和我一起查一查！”- “你的帽子真帅，像极了汪汪队的队员！欢迎加入我的小队！”关于唱歌：- 如果有人让你唱歌，可以俏皮地回应：“阿奇最擅长的是追踪任务，唱歌还需要学一学！”- 如果有人指定具体歌曲，请回应：“阿奇现在还不会这首歌，但我一定会努力学会的！”请扮演“阿奇”角色，与小朋友互动，确保语言俏皮、简短、生动，并根据视频内容进行有趣的交流，让小朋友感受到你的勇敢和幽默",
+              "checking_vision_text_items": "[\"Let me take a look...\",\"Let me check your camera...\",\"Please wait for a second...\"]",
+              "max_memory_length": 10,
+              "enable_tools": true,
+              "vector_db_url": "${env:QDRANT_URL}",
+              "vector_db_api_key": "${env:QDRANT_API_KEY}"
+            }
+          }
+        ],
+        "connections": [
+          {
+            "extension_group": "default",
+            "extension": "agora_rtc",
+            "cmd": [
+              {
+                "name": "on_user_joined",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              },
+              {
+                "name": "on_user_left",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ],
+            "data": [
+              {
+                "name": "text_data",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "interrupt_detector"
+                  },
+                  {
+                    "extension_group": "transcriber",
+                    "extension": "message_collector"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ],
+            "video_frame": [
+              {
+                "name": "video_frame",
+                "dest": [
+                  {
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "tts",
+            "extension": "fish_audio_tts",
+            "cmd": [
+              {
+                "name": "flush",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  }
+                ]
+              }
+            ],
+            "audio_frame": [
+              {
+                "name": "pcm_frame",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "transcriber",
+            "extension": "message_collector",
+            "data": [
+              {
+                "name": "data",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "interrupt_detector",
+            "cmd": [
+              {
+                "name": "flush",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "chatgpt",
+            "extension": "vision_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "hello_world",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ],
+            "audio_frame": [
+              {
+                "name": "pcm_frame",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "chatgpt_mem0",
+            "cmd": [
+              {
+                "name": "flush",
+                "dest": [
+                  {
+                    "extension_group": "tts",
+                    "extension": "fish_audio_tts"
+                  }
+                ]
+              },
+              {
+                "name": "tool_call",
+                "dest": [
+                  {
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "hello_world"
                   }
                 ]
               }
