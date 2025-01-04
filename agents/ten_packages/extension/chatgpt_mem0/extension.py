@@ -256,17 +256,22 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
                                 result.get_property_to_json(CMD_PROPERTY_RESULT))
 
                             ten_env.log_info(f"tool_result: {tool_result}")
-                            # self.memory_cache = []
-                            self.memory_cache.pop()
-                            result_content = tool_result["content"]
-                            nonlocal message
-                            new_message = {
-                                "role": "user",
-                                "content": self._convert_to_content_parts(message["content"])
-                            }
-                            new_message["content"] = new_message["content"] + \
-                                self._convert_to_content_parts(result_content)
-                            await self.queue_input_item(True, messages=[new_message], no_tool=True)
+                            if tool_call["function"]["name"] == "sing":
+                                # self.memory_cache.pop()
+                                self.send_text_output(ten_env, tool_result["content"][0]["text"], True)
+                            
+                            else:
+                                # self.memory_cache = []
+                                self.memory_cache.pop()
+                                result_content = tool_result["content"]
+                                nonlocal message
+                                new_message = {
+                                    "role": "user",
+                                    "content": self._convert_to_content_parts(message["content"])
+                                }
+                                new_message["content"] = new_message["content"] + \
+                                    self._convert_to_content_parts(result_content)
+                                await self.queue_input_item(True, messages=[new_message], no_tool=True)
                         else:
                             ten_env.log_error(f"Tool call failed")
                 self.tool_task_future.set_result(None)
