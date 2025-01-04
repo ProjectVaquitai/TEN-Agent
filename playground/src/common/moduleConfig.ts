@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export namespace ModuleRegistry {
   export enum ModuleType {
     STT = "stt",

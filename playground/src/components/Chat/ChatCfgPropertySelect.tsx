@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import * as React from "react"
@@ -5,9 +6,7 @@ import { buttonVariants } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -18,30 +17,23 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useAppDispatch, useAppSelector } from "@/common"
+import { useAppSelector } from "@/common"
 import { cn } from "@/lib/utils"
 import {
   SettingsIcon,
   LoaderCircleIcon,
-  BoxesIcon,
   Trash2Icon,
 } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -52,7 +44,6 @@ import { useGraphs } from "@/common/hooks"
 import { AddonDef, Graph } from "@/common/graph"
 
 export function RemotePropertyCfgSheet() {
-  const dispatch = useAppDispatch()
   const { selectedGraph, update: updateGraph } = useGraphs()
   const graphName = useAppSelector((state) => state.global.selectedGraphId)
 
@@ -99,10 +90,10 @@ export function RemotePropertyCfgSheet() {
             <SelectContent>
               {selectedGraph
                 ? selectedGraph.nodes.map((node) => (
-                    <SelectItem key={node.name} value={node.name}>
-                      {node.name}
-                    </SelectItem>
-                  ))
+                  <SelectItem key={node.name} value={node.name}>
+                    {node.name}
+                  </SelectItem>
+                ))
                 : null}
             </SelectContent>
           </Select>
@@ -161,7 +152,6 @@ export function RemotePropertyAddCfgSheet({
   extensionNodeData: Record<string, string | number | boolean | null>
   onUpdate: (data: string) => void
 }) {
-  const dispatch = useAppDispatch()
   const { selectedGraph } = useGraphs()
 
   const selectedExtensionNode = selectedGraph?.nodes.find(
@@ -350,7 +340,7 @@ const GraphCfgForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {Object.entries(initialDataWithType).map(([key, { value, type }]) => (
+        {Object.entries(initialDataWithType).map(([key, { type }]) => (
           <FormField
             key={key}
             control={form.control}
