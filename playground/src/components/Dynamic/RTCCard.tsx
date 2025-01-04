@@ -2,8 +2,17 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { ICameraVideoTrack, ILocalVideoTrack, IMicrophoneAudioTrack } from "agora-rtc-sdk-ng"
-import { useAppSelector, useAppDispatch, VOICE_OPTIONS, VideoSourceType } from "@/common"
+import {
+  ICameraVideoTrack,
+  ILocalVideoTrack,
+  IMicrophoneAudioTrack,
+} from "agora-rtc-sdk-ng"
+import {
+  useAppSelector,
+  useAppDispatch,
+  VOICE_OPTIONS,
+  VideoSourceType,
+} from "@/common"
 import { ITextItem, EMessageType } from "@/types"
 import { rtcManager, IUserTracks, IRtcUser } from "@/manager"
 import {
@@ -31,7 +40,9 @@ export default function RTCCard(props: { className?: string }) {
   const [audioTrack, setAudioTrack] = React.useState<IMicrophoneAudioTrack>()
   const [screenTrack, setScreenTrack] = React.useState<ILocalVideoTrack>()
   const [remoteuser, setRemoteUser] = React.useState<IRtcUser>()
-  const [videoSourceType, setVideoSourceType] = React.useState<VideoSourceType>(VideoSourceType.CAMERA)
+  const [videoSourceType, setVideoSourceType] = React.useState<VideoSourceType>(
+    VideoSourceType.CAMERA,
+  )
 
   React.useEffect(() => {
     if (!options.channel) {
@@ -138,7 +149,7 @@ export default function RTCCard(props: { className?: string }) {
           {/* -- You */}
           <div className="w-full space-y-2 px-2">
             <MicrophoneBlock audioTrack={audioTrack} />
-            <VideoBlock 
+            <VideoBlock
               cameraTrack={videoTrack}
               screenTrack={screenTrack}
               videoSourceType={videoSourceType}

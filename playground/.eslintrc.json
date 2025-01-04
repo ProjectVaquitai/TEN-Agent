@@ -1,0 +1,11 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "react/react-in-jsx-scope": "off", // Example: Disable rule requiring React in scope
+    "no-console": "warn", // Example: Change no-console rule to warning
+    "semi": ["warn", "never"], // Example: Change semi-colon rule to warning and allow no semi-colons
+    "quotes": ["warn", "double"], // Example: Change quotes rule to warning and prefer single quotes
+    "indent": ["warn", 2] // Example: Change indent rule to warning and use 2 spaces
+    // Add more rules as needed
+  }
+}

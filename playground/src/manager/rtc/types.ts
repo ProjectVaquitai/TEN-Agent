@@ -1,7 +1,5 @@
 import {
   UID,
-  IAgoraRTCRemoteUser,
-  IAgoraRTCClient,
   ICameraVideoTrack,
   IMicrophoneAudioTrack,
   NetworkQuality,
