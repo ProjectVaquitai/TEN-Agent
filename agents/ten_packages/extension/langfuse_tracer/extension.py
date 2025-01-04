@@ -158,9 +158,14 @@ class LangfuseTracerExtension(Extension):
             audio_url = ""
             try:
                 image_url = self.upload_video_frame(ten_env)
+            except:
+                ten_env.log_error("failed to upload image/audio to cos!!")
+            
+            try:
                 audio_url = self.upload_audio_frame(ten_env)
             except:
                 ten_env.log_error("failed to upload image/audio to cos!!")
+            
             input = f"{text} \n ![image]({image_url}) \n ![audio]({audio_url})"
             trace.update(input=input)
 
