@@ -21,7 +21,11 @@
     ]
   },
   "api": {
-    "property": {},
+    "property": {
+      "channel": {
+        "type": "string"
+      }
+    },
     "data_in": [
       {
         "name": "text_data",

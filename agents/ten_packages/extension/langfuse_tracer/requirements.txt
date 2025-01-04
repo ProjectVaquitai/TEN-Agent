@@ -1,2 +1,4 @@
 langfuse
 cos-python-sdk-v5
+PIL
+pydub

@@ -14,6 +14,8 @@ const (
 	extensionNameAgoraRTC   = "agora_rtc"
 	extensionNameAgoraRTM   = "agora_rtm"
 	extensionNameHttpServer = "http_server"
+	extensionNameLangfuseTacer = "langfuse_tracer"
+	extensionNameChatGPTMem0 = "chatgpt_mem0"
 
 	// Property json
 	PropertyJsonFile = "./agents/property.json"
@@ -33,6 +35,8 @@ var (
 		"ChannelName": {
 			{ExtensionName: extensionNameAgoraRTC, Property: "channel"},
 			{ExtensionName: extensionNameAgoraRTM, Property: "channel"},
+			{ExtensionName: extensionNameLangfuseTacer, Property: "channel"},
+			{ExtensionName: extensionNameChatGPTMem0, Property: "channel"},
 		},
 		"RemoteStreamId": {
 			{ExtensionName: extensionNameAgoraRTC, Property: "remote_stream_id"},
