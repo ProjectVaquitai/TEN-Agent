@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import * as React from "react"
@@ -10,7 +11,6 @@ import {
 import {
   useAppSelector,
   useAppDispatch,
-  VOICE_OPTIONS,
   VideoSourceType,
 } from "@/common"
 import { ITextItem, EMessageType } from "@/types"
@@ -21,7 +21,6 @@ import {
   setVoiceType,
   setOptions,
 } from "@/store/reducers/global"
-import AgentVoicePresetSelect from "@/components/Agent/VoicePresetSelect"
 import AgentView from "@/components/Agent/View"
 import MicrophoneBlock from "@/components/Agent/Microphone"
 import VideoBlock from "@/components/Agent/Camera"
@@ -33,8 +32,6 @@ export default function RTCCard(props: { className?: string }) {
 
   const dispatch = useAppDispatch()
   const options = useAppSelector((state) => state.global.options)
-  const voiceType = useAppSelector((state) => state.global.voiceType)
-  const agentConnected = useAppSelector((state) => state.global.agentConnected)
   const { userId, channel } = options
   const [videoTrack, setVideoTrack] = React.useState<ICameraVideoTrack>()
   const [audioTrack, setAudioTrack] = React.useState<IMicrophoneAudioTrack>()
@@ -123,10 +120,6 @@ export default function RTCCard(props: { className?: string }) {
         }),
       )
     }
-  }
-
-  const onVoiceChange = (value: any) => {
-    dispatch(setVoiceType(value))
   }
 
   const onVideoSourceTypeChange = async (value: VideoSourceType) => {

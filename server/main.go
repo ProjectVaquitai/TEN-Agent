@@ -66,7 +66,7 @@ func main() {
 
 	// Start server
 	httpServerConfig := &internal.HttpServerConfig{
-		AppId:                    agoraAppId,
+		// AppId:                    agoraAppId,
 		AppCertificate:           os.Getenv("AGORA_APP_CERTIFICATE"),
 		LogPath:                  logPath,
 		Port:                     os.Getenv("SERVER_PORT"),
