@@ -40,7 +40,8 @@ DATA_IN_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_IN_TEXT_DATA_PROPERTY_IS_FINAL = "is_final"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT = "text"
 DATA_OUT_TEXT_DATA_PROPERTY_TEXT_END_OF_SEGMENT = "end_of_segment"
-PROPERTY_CHANNEL_NAME="channel"
+PROPERTY_CHANNEL_NAME = "channel"
+
 
 class ChatGPTMem0Extension(AsyncLLMBaseExtension):
     def __init__(self, name: str):
@@ -61,9 +62,10 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
     async def on_start(self, ten_env: AsyncTenEnv) -> None:
         ten_env.log_info("on_start")
         await super().on_start(ten_env)
-        
+
         try:
-            self.channel_name = ten_env.get_property_string(PROPERTY_CHANNEL_NAME)
+            self.channel_name = ten_env.get_property_string(
+                PROPERTY_CHANNEL_NAME)
         except Exception as err:
             ten_env.error(f"GetProperty channel failed, err: {err}")
 
@@ -81,12 +83,11 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
                 f"initialized with max_tokens: {self.config.max_tokens}, model: {self.config.model}, vendor: {self.config.vendor}")
         except Exception as err:
             ten_env.log_error(f"Failed to initialize OpenAIChatGPT: {err}")
-        
+
         try:
             self.memory_manager = MyMemManager(ten_env, self.config)
         except Exception as err:
             ten_env.log_error(f"Failed to initialize Mem0: {err}")
-        
 
     async def on_stop(self, ten_env: AsyncTenEnv) -> None:
         ten_env.log_info("on_stop")
@@ -144,14 +145,15 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
 
         ten_env.log_info(f"OnData input text: [{input_text}]")
         try:
-            memory_text = self.memory_manager.search(input_text, user_id=self.channel_name)
+            memory_text = self.memory_manager.search(
+                input_text, user_id=self.channel_name)
             prompt = f"User input: {input_text}\nPrevious memories: {memory_text}"
             ten_env.log_info(f"Prompt: {prompt}")
-            
+
             # Start an asynchronous task for handling chat completion
             message = LLMChatCompletionUserMessageParam(
                 role="user", content=prompt)
-            
+
             # start_time = time.time()
             # ten_env.log_info(f"Adding Memory")
 
@@ -161,26 +163,25 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
             #     ten_env.log_warn(f"Memory addition failed: {str(mem_err)}")
 
             # ten_env.log_info(f"Adding Cost:{round(time.time() - start_time, 2)}")
-            
-            # await self.queue_input_item(False, messages=[message])
 
+            # await self.queue_input_item(False, messages=[message])
 
             def process_memory_operations():
                 mem_time = time.time()
                 ten_env.log_info(f"Adding Memory")
                 try:
-                    self.memory_manager.memory.add(input_text, user_id=self.channel_name)
+                    self.memory_manager.memory.add(
+                        input_text, user_id=self.channel_name)
                 except Exception as mem_err:
                     ten_env.log_warn(f"Memory addition failed: {str(mem_err)}")
-                ten_env.log_info(f"Adding Cost:{round(time.time() - mem_time, 2)}")
-
+                ten_env.log_info(
+                    f"Adding Cost:{round(time.time() - mem_time, 2)}")
 
             thread = threading.Thread(target=process_memory_operations)
             thread.start()
 
             await self.queue_input_item(False, messages=[message])
 
-            
         except Exception as e:
             ten_env.log_error(f"Error in memory operations: {str(e)}")
             # 可以选择使用没有记忆的基础提示继续
@@ -264,9 +265,8 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
 
                             ten_env.log_info(f"tool_result: {tool_result}")
                             if tool_call["function"]["name"] == "sing":
-                                # self.memory_cache.pop()
-                                self.send_text_output(ten_env, tool_result["content"][0]["text"], True)
-                            
+                                self.send_text_output(
+                                    ten_env, tool_result["content"][0]["text"], True)
                             else:
                                 # self.memory_cache = []
                                 self.memory_cache.pop()
@@ -277,7 +277,8 @@ class ChatGPTMem0Extension(AsyncLLMBaseExtension):
                                     "content": self._convert_to_content_parts(message["content"])
                                 }
                                 new_message["content"] = new_message["content"] + \
-                                    self._convert_to_content_parts(result_content)
+                                    self._convert_to_content_parts(
+                                        result_content)
                                 await self.queue_input_item(True, messages=[new_message], no_tool=True)
                         else:
                             ten_env.log_error(f"Tool call failed")

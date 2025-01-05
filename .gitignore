@@ -36,3 +36,4 @@ xdump_config
 .idea
 .pnpm-store
 data/
+agents/output_images/
