@@ -1,116 +1,107 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
-import { IMicrophoneAudioTrack } from "agora-rtc-sdk-ng"
-import { normalizeFrequencies } from "./utils"
-import { useState, useEffect, useMemo, useRef, useCallback } from "react"
-import type { AppDispatch, AppStore, RootState } from "../store"
-import { useDispatch, useSelector, useStore } from "react-redux"
-import { Node, AddonDef, Graph } from "@/common/graph"
-import {
-  fetchGraphDetails,
-  initializeGraphData,
-  updateGraph,
-} from "@/store/reducers/global"
-import {
-  moduleRegistry,
-  ModuleRegistry,
-  toolModuleRegistry,
-} from "@/common/moduleConfig"
+import { IMicrophoneAudioTrack } from "agora-rtc-sdk-ng";
+import { deepMerge, normalizeFrequencies } from "./utils";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import type { AppDispatch, AppStore, RootState } from "../store";
+import { useDispatch, useSelector, useStore } from "react-redux";
+import { Node, AddonDef, Graph } from "@/common/graph";
+import { fetchGraphDetails, initializeGraphData, updateGraph } from "@/store/reducers/global";
+import { moduleRegistry, ModuleRegistry, toolModuleRegistry } from "@/common/moduleConfig";
 // import { Grid } from "antd"
 
 // const { useBreakpoint } = Grid;
 
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
-export const useAppSelector = useSelector.withTypes<RootState>()
-export const useAppStore = useStore.withTypes<AppStore>()
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+export const useAppSelector = useSelector.withTypes<RootState>();
+export const useAppStore = useStore.withTypes<AppStore>();
 
 export const useMultibandTrackVolume = (
   track?: IMicrophoneAudioTrack | MediaStreamTrack,
   bands: number = 5,
   loPass: number = 100,
-  hiPass: number = 600,
+  hiPass: number = 600
 ) => {
-  const [frequencyBands, setFrequencyBands] = useState<Float32Array[]>([])
+  const [frequencyBands, setFrequencyBands] = useState<Float32Array[]>([]);
 
   useEffect(() => {
     if (!track) {
-      return setFrequencyBands(new Array(bands).fill(new Float32Array(0)))
+      return setFrequencyBands(new Array(bands).fill(new Float32Array(0)));
     }
 
-    const ctx = new AudioContext()
-    const finTrack =
-      track instanceof MediaStreamTrack ? track : track.getMediaStreamTrack()
-    const mediaStream = new MediaStream([finTrack])
-    const source = ctx.createMediaStreamSource(mediaStream)
-    const analyser = ctx.createAnalyser()
-    analyser.fftSize = 2048
+    const ctx = new AudioContext();
+    let finTrack =
+      track instanceof MediaStreamTrack ? track : track.getMediaStreamTrack();
+    const mediaStream = new MediaStream([finTrack]);
+    const source = ctx.createMediaStreamSource(mediaStream);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 2048;
 
-    source.connect(analyser)
+    source.connect(analyser);
 
-    const bufferLength = analyser.frequencyBinCount
-    const dataArray = new Float32Array(bufferLength)
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Float32Array(bufferLength);
 
     const updateVolume = () => {
-      analyser.getFloatFrequencyData(dataArray)
-      let frequencies: Float32Array = new Float32Array(dataArray.length)
+      analyser.getFloatFrequencyData(dataArray);
+      let frequencies: Float32Array = new Float32Array(dataArray.length);
       for (let i = 0; i < dataArray.length; i++) {
-        frequencies[i] = dataArray[i]
+        frequencies[i] = dataArray[i];
       }
-      frequencies = frequencies.slice(loPass, hiPass)
+      frequencies = frequencies.slice(loPass, hiPass);
 
-      const normalizedFrequencies = normalizeFrequencies(frequencies)
-      const chunkSize = Math.ceil(normalizedFrequencies.length / bands)
-      const chunks: Float32Array[] = []
+      const normalizedFrequencies = normalizeFrequencies(frequencies);
+      const chunkSize = Math.ceil(normalizedFrequencies.length / bands);
+      const chunks: Float32Array[] = [];
       for (let i = 0; i < bands; i++) {
         chunks.push(
-          normalizedFrequencies.slice(i * chunkSize, (i + 1) * chunkSize),
-        )
+          normalizedFrequencies.slice(i * chunkSize, (i + 1) * chunkSize)
+        );
       }
 
-      setFrequencyBands(chunks)
-    }
+      setFrequencyBands(chunks);
+    };
 
-    const interval = setInterval(updateVolume, 10)
+    const interval = setInterval(updateVolume, 10);
 
     return () => {
-      source.disconnect()
-      clearInterval(interval)
-    }
-  }, [track, loPass, hiPass, bands])
+      source.disconnect();
+      clearInterval(interval);
+    };
+  }, [track, loPass, hiPass, bands]);
 
-  return frequencyBands
-}
+  return frequencyBands;
+};
 
 export const useAutoScroll = (ref: React.RefObject<HTMLElement | null>) => {
-  const callback: MutationCallback = (mutationList) => {
+  const callback: MutationCallback = (mutationList, observer) => {
     mutationList.forEach((mutation) => {
       switch (mutation.type) {
         case "childList":
           if (!ref.current) {
-            return
+            return;
           }
-          ref.current.scrollTop = ref.current.scrollHeight
-          break
+          ref.current.scrollTop = ref.current.scrollHeight;
+          break;
       }
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     if (!ref.current) {
-      return
+      return;
     }
-    const observer = new MutationObserver(callback)
+    const observer = new MutationObserver(callback);
     observer.observe(ref.current, {
       childList: true,
       subtree: true,
-    })
+    });
 
     return () => {
-      observer.disconnect()
-    }
-  }, [ref])
-}
+      observer.disconnect();
+    };
+  }, [ref]);
+};
 
 // export const useSmallScreen = () => {
 //   const screens = useBreakpoint();
@@ -131,14 +122,16 @@ export const useAutoScroll = (ref: React.RefObject<HTMLElement | null>) => {
 // }
 
 export const usePrevious = (value: any) => {
-  const ref = useRef()
+  const ref = useRef();
 
   useEffect(() => {
-    ref.current = value
-  }, [value])
+    ref.current = value;
+  }, [value]);
 
-  return ref.current
-}
+  return ref.current;
+};
+
+
 
 const useGraphs = () => {
   const dispatch = useAppDispatch()
@@ -147,9 +140,7 @@ const useGraphs = () => {
   )
   const graphMap = useAppSelector((state) => state.global.graphMap)
   const selectedGraph = graphMap[selectedGraphId]
-  const addonModules: AddonDef.Module[] = useAppSelector(
-    (state) => state.global.addonModules,
-  )
+  const addonModules: AddonDef.Module[] = useAppSelector((state) => state.global.addonModules);
 
   const initialize = async () => {
     await dispatch(initializeGraphData())
@@ -170,9 +161,7 @@ const useGraphs = () => {
       if (!selectedGraph) {
         return null
       }
-      const node = selectedGraph.nodes.find(
-        (node: Node) => node.name === nodeName,
-      )
+      const node = selectedGraph.nodes.find((node: Node) => node.name === nodeName)
       if (!node) {
         return null
       }
@@ -181,49 +170,47 @@ const useGraphs = () => {
     [selectedGraph],
   )
 
+
   const getInstalledAndRegisteredModulesMap = useCallback(() => {
-    const groupedModules: Record<
-      ModuleRegistry.NonToolModuleType,
-      ModuleRegistry.Module[]
-    > = {
+    const groupedModules: Record<ModuleRegistry.NonToolModuleType, ModuleRegistry.Module[]> = {
       stt: [],
       tts: [],
       llm: [],
-      v2v: [],
+      v2v: []
     }
 
     addonModules.forEach((addonModule) => {
-      const registeredModule = moduleRegistry[addonModule.name]
+      const registeredModule = moduleRegistry[addonModule.name];
       if (registeredModule && registeredModule.type !== "tool") {
-        groupedModules[registeredModule.type].push(registeredModule)
+        groupedModules[registeredModule.type].push(registeredModule);
       }
-    })
+    });
 
-    return groupedModules
-  }, [addonModules])
+    return groupedModules;
+  }, [addonModules]);
 
   const getInstalledAndRegisteredToolModules = useCallback(() => {
-    const toolModules: ModuleRegistry.ToolModule[] = []
+    const toolModules: ModuleRegistry.ToolModule[] = [];
 
     addonModules.forEach((addonModule) => {
-      const registeredModule = toolModuleRegistry[addonModule.name]
+      const registeredModule = toolModuleRegistry[addonModule.name];
       if (registeredModule && registeredModule.type === "tool") {
-        toolModules.push(registeredModule)
+        toolModules.push(registeredModule);
       }
-    })
+    });
 
-    return toolModules
+    return toolModules;
   }, [addonModules])
 
   const installedAndRegisteredModulesMap = useMemo(
     () => getInstalledAndRegisteredModulesMap(),
     [getInstalledAndRegisteredModulesMap],
-  )
+  );
 
   const installedAndRegisteredToolModules = useMemo(
     () => getInstalledAndRegisteredToolModules(),
     [getInstalledAndRegisteredToolModules],
-  )
+  );
 
   return {
     initialize,

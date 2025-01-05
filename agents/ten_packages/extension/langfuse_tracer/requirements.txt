@@ -1,4 +1,0 @@
-langfuse
-cos-python-sdk-v5
-pillow
-pydub

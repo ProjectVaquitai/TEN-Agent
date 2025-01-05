@@ -36,9 +36,7 @@ services:
       - AGENT_SERVER_URL=http://ten_agent_dev:8080
       - TEN_DEV_SERVER_URL=http://ten_agent_dev:49483
   # ten_agent_demo:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.demo
+  #   image: ghcr.io/ten-framework/ten_agent_demo:0.6.2-36-gd5dba93
   #   container_name: ten_agent_demo
   #   restart: always
   #   ports:
