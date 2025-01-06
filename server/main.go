@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/joho/godotenv"
 
@@ -54,6 +57,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Initialize MongoDB
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client, config, err := internal.InitializeMongoDB(ctx)
+	if err != nil {
+		log.Fatalf("Failed to initialize MongoDB: %v", err)
+	}
+
+	userStore := internal.NewMongoDBUserStore(client, config.DatabaseName, config.UserCollection)
+	sessionStore := internal.NewMongoDBSessionStore(client, config.DatabaseName, config.SessionCollection)
+
 	// Set up signal handler to clean up all workers on Ctrl+C
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -75,6 +90,6 @@ func main() {
 		WorkerQuitTimeoutSeconds: workerQuitTimeoutSeconds,
 		Log2Stdout:               log2Stdout,
 	}
-	httpServer := internal.NewHttpServer(httpServerConfig)
+	httpServer := internal.NewHttpServer(httpServerConfig, userStore, sessionStore)
 	httpServer.Start()
 }

@@ -86,13 +86,11 @@ type VectorDocumentUpload struct {
 	File        *multipart.FileHeader `form:"file" binding:"required"`
 }
 
-func NewHttpServer(httpServerConfig *HttpServerConfig) *HttpServer {
-	userStore := NewInMemoryUserStore()       // add user store
-	sessionStore := NewInMemorySessionStore() // add session store
+func NewHttpServer(httpServerConfig *HttpServerConfig, userStore UserStore, sessionStore SessionStore) *HttpServer {
 	s := &HttpServer{
 		config:       httpServerConfig,
-		userStore:    userStore,    // store reference
-		sessionStore: sessionStore, // initialize session store
+		userStore:    userStore,
+		sessionStore: sessionStore,
 	}
 	s.engine = gin.Default()
 	return s
@@ -640,7 +638,7 @@ func (s *HttpServer) handleCreateUser(c *gin.Context) {
 		Email:        req.Email,
 		PasswordHash: req.Password, // For demo only, use proper hash in real app
 	}
-	if err := s.userStore.CreateUser(user); err != nil {
+	if err := s.userStore.CreateUser(c.Request.Context(), user); err != nil {
 		slog.Error("create user failed", "err", err, logTag)
 		s.output(c, codeErrCreateUserFailed, nil, http.StatusInternalServerError)
 		return
@@ -650,7 +648,7 @@ func (s *HttpServer) handleCreateUser(c *gin.Context) {
 
 func (s *HttpServer) handleGetUser(c *gin.Context) {
 	id := c.Param("id")
-	user, err := s.userStore.GetUserByID(id)
+	user, err := s.userStore.GetUserByID(c.Request.Context(), id)
 	if err != nil || user.IsArchived {
 		s.output(c, codeErrUserNotFound, nil, http.StatusNotFound)
 		return
@@ -670,7 +668,7 @@ func (s *HttpServer) handleUpdateUser(c *gin.Context) {
 		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
-	user, err := s.userStore.GetUserByID(id)
+	user, err := s.userStore.GetUserByID(c.Request.Context(), id)
 	if err != nil {
 		s.output(c, codeErrUserNotFound, nil, http.StatusNotFound)
 		return
@@ -678,7 +676,7 @@ func (s *HttpServer) handleUpdateUser(c *gin.Context) {
 	user.Name = req.Name
 	user.Email = req.Email
 	user.PasswordHash = req.Password
-	if err := s.userStore.UpdateUser(user); err != nil {
+	if err := s.userStore.UpdateUser(c.Request.Context(), user); err != nil {
 		s.output(c, codeErrUpdateUserFailed, nil, http.StatusInternalServerError)
 		return
 	}
@@ -687,7 +685,7 @@ func (s *HttpServer) handleUpdateUser(c *gin.Context) {
 
 func (s *HttpServer) handleArchiveUser(c *gin.Context) {
 	id := c.Param("id")
-	if err := s.userStore.ArchiveUser(id); err != nil {
+	if err := s.userStore.ArchiveUser(c.Request.Context(), id); err != nil {
 		s.output(c, codeErrUserNotFound, nil, http.StatusNotFound)
 		return
 	}
@@ -703,7 +701,7 @@ func (s *HttpServer) handleLogin(c *gin.Context) {
 		s.output(c, codeErrParamsInvalid, nil, http.StatusBadRequest)
 		return
 	}
-	user, err := s.userStore.GetUserByEmail(req.Email)
+	user, err := s.userStore.GetUserByEmail(c.Request.Context(), req.Email)
 	if err != nil || user.IsArchived {
 		s.output(c, codeErrUserNotFound, nil, http.StatusUnauthorized)
 		return
@@ -717,7 +715,7 @@ func (s *HttpServer) handleLogin(c *gin.Context) {
 		Token:  token,
 		UserID: user.ID,
 	}
-	if err := s.sessionStore.CreateSession(session); err != nil {
+	if err := s.sessionStore.CreateSession(c.Request.Context(), session); err != nil {
 		s.output(c, codeErrCreateSessionFailed, nil, http.StatusInternalServerError)
 		return
 	}
@@ -726,7 +724,7 @@ func (s *HttpServer) handleLogin(c *gin.Context) {
 
 func (s *HttpServer) handleLogout(c *gin.Context) {
 	token := c.GetHeader("Authorization")
-	if err := s.sessionStore.DeleteSession(token); err != nil {
+	if err := s.sessionStore.DeleteSession(c.Request.Context(), token); err != nil {
 		s.output(c, codeErrAuthFailed, nil, http.StatusUnauthorized)
 		return
 	}
@@ -735,12 +733,12 @@ func (s *HttpServer) handleLogout(c *gin.Context) {
 
 func (s *HttpServer) handleVerifyToken(c *gin.Context) {
 	token := c.GetHeader("Authorization")
-	session, err := s.sessionStore.GetSession(token)
+	session, err := s.sessionStore.GetSession(c.Request.Context(), token)
 	if err != nil {
 		s.output(c, codeErrAuthFailed, nil, http.StatusUnauthorized)
 		return
 	}
-	user, err := s.userStore.GetUserByID(session.UserID)
+	user, err := s.userStore.GetUserByID(c.Request.Context(), session.UserID)
 	if err != nil || user.IsArchived {
 		s.output(c, codeErrUserNotFound, nil, http.StatusUnauthorized)
 		return
