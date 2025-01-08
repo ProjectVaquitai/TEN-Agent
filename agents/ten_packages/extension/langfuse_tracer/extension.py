@@ -5,8 +5,6 @@
 # Copyright (c) 2024 Agora IO. All rights reserved.
 #
 #
-import base64
-import json
 import os
 import threading
 import time
@@ -24,15 +22,16 @@ from ten import (
     Data,
 )
 from enum import Enum
-from io import BytesIO
 from PIL import Image
 from pydub import AudioSegment
 import numpy as np
 import asyncio
 from langfuse import Langfuse
 from .utils import upload_image_to_cos, upload_audio_to_cos
-from base64 import b64encode
-
+import asyncio
+import threading
+from dataclasses import dataclass
+from typing import Optional
 
 TEXT_DATA_TEXT_FIELD = "text"
 TEXT_DATA_FINAL_FIELD = "is_final"
@@ -53,11 +52,21 @@ class Role(str, Enum):
     User = "user"
     Assistant = "assistant"
 
+@dataclass
+class TraceData:
+    text: str
+    stream_id: int
+    end_of_segment: bool
+    session_id: str
+    channel_name: str
+
 class LangfuseTracerExtension(Extension):
     def __init__(self, name: str):
         super().__init__(name)
         self.video_frame = ""
-        self.channel_name="default_channel"
+        self.channel_name = "default_channel"
+        self.queue = asyncio.Queue()
+        self.cached_text_map = {}
 
     def on_init(self, ten_env: TenEnv) -> None:
         ten_env.log_info("on_init")
@@ -69,32 +78,70 @@ class LangfuseTracerExtension(Extension):
             self.channel_name = ten_env.get_property_string(PROPERTY_CHANNEL_NAME)
         except Exception as err:
             ten_env.error(f"GetProperty channel failed, err: {err}")
+
+        # 初始化异步事件循环
+        self.loop = asyncio.new_event_loop()
+        def start_loop():
+            asyncio.set_event_loop(self.loop)
+            self.loop.run_forever()
+        threading.Thread(target=start_loop, args=[]).start()
+
+        # 启动处理队列的任务
+        self.loop.create_task(self._process_queue(ten_env))
+        
         ten_env.on_start_done()
 
-    def on_stop(self, ten_env: TenEnv) -> None:
-        ten_env.log_info("on_stop")
-        ten_env.on_stop_done()
+    async def _process_queue(self, ten_env: TenEnv):
+        while True:
+            trace_data = await self.queue.get()
+            if trace_data is None:
+                break
+                
+            try:
+                # 创建 trace
+                trace = langfuse.trace(
+                    name="asr-llm-tts",
+                    user_id=trace_data.channel_name,
+                    session_id=trace_data.session_id,
+                    tags=["production"]
+                )
 
-    def on_deinit(self, ten_env: TenEnv) -> None:
-        ten_env.log_info("on_deinit")
-        ten_env.on_deinit_done()
+                if trace_data.stream_id == 0:
+                    trace.update(output=trace_data.text)
+                else:
+                    # 异步上传图片和音频
+                    image_url, audio_url = await asyncio.gather(
+                        self._upload_video_frame(ten_env),
+                        self._upload_audio_frame(ten_env)
+                    )
+                    
+                    input_text = f"{trace_data.text} \n ![image]({image_url}) \n ![audio]({audio_url})"
+                    trace.update(input=input_text)
 
-    def on_cmd(self, ten_env: TenEnv, cmd: Cmd) -> None:
-        cmd_name = cmd.get_name()
-        ten_env.log_info("on_cmd name {}".format(cmd_name))
+            except Exception as e:
+                ten_env.log_error(f"Process trace failed: {str(e)}")
+            finally:
+                self.queue.task_done()
 
-        # TODO: process cmd
-        cmd_result = CmdResult.create(StatusCode.OK)
-        ten_env.return_result(cmd_result, cmd)
+    async def _upload_video_frame(self, ten_env) -> str:
+        try:
+            return self.upload_video_frame(ten_env)
+        except Exception as e:
+            ten_env.log_error(f"Failed to upload video: {str(e)}")
+            return ""
+
+    async def _upload_audio_frame(self, ten_env) -> str:
+        try:
+            return self.upload_audio_frame(ten_env)
+        except Exception as e:
+            ten_env.log_error(f"Failed to upload audio: {str(e)}")
+            return ""
 
     def on_data(self, ten_env: TenEnv, data: Data) -> None:
-        """
-        on_data receives data from ten graph.
-        current suppotend data:
-          - name: text_data
-            example:
-            {"name": "text_data", "properties": {"text": "hello", "is_final": true, "stream_id": 123, "end_of_segment": true}}
-        """
+        text = ""
+        final = True
+        stream_id = 0
+        end_of_segment = False
 
         text = ""
         final = True
@@ -130,46 +177,41 @@ class LangfuseTracerExtension(Extension):
                 f"on_data get_property_bool {TEXT_DATA_END_OF_SEGMENT_FIELD} error: {e}"
             )
 
-        # We cache all final text data and append the non-final text data to the cached data
-        # until the end of the segment.
+        # 处理文本缓存
         if end_of_segment:
-            if stream_id in cached_text_map:
-                text = cached_text_map[stream_id] + text
-                del cached_text_map[stream_id]
+            if stream_id in self.cached_text_map:
+                text = self.cached_text_map[stream_id] + text
+                del self.cached_text_map[stream_id]
         else:
             if final:
-                if stream_id in cached_text_map:
-                    text = cached_text_map[stream_id] + text
+                if stream_id in self.cached_text_map:
+                    text = self.cached_text_map[stream_id] + text
+                self.cached_text_map[stream_id] = text
 
-                cached_text_map[stream_id] = text
-
-        session_id = self.channel_name + '_' + datetime.datetime.now().strftime("%Y-%m-%d")
         if end_of_segment:
-            trace = langfuse.trace(
-                name="asr-llm-tts",
-                user_id=self.channel_name,
+            session_id = f"{self.channel_name}_{datetime.datetime.now().strftime('%Y-%m-%d')}"
+            trace_data = TraceData(
+                text=text,
+                stream_id=stream_id,
+                end_of_segment=end_of_segment,
                 session_id=session_id,
-                tags=["production"]
+                channel_name=self.channel_name
             )
-        if end_of_segment and (stream_id == 0):
-            trace.update(output=text)
-        elif end_of_segment and (stream_id != 0):
-            image_url = ""
-            audio_url = ""
-            try:
-                image_url = self.upload_video_frame(ten_env)
-            except:
-                ten_env.log_error("failed to upload image/audio to cos!!")
             
-            try:
-                audio_url = self.upload_audio_frame(ten_env)
-            except:
-                ten_env.log_error("failed to upload image/audio to cos!!")
-            
-            input = f"{text} \n ![image]({image_url}) \n ![audio]({audio_url})"
-            trace.update(input=input)
+            # 将数据放入队列异步处理
+            asyncio.run_coroutine_threadsafe(
+                self._queue_message(trace_data), self.loop
+            )
 
+    async def _queue_message(self, trace_data: TraceData):
+        await self.queue.put(trace_data)
 
+    def on_stop(self, ten_env: TenEnv) -> None:
+        # 清理资源
+        if hasattr(self, 'loop'):
+            asyncio.run_coroutine_threadsafe(self.queue.put(None), self.loop)
+            self.loop.stop()
+        ten_env.on_stop_done()
     def on_audio_frame(self, ten_env: TenEnv, audio_frame: AudioFrame) -> None:
         # TODO: process pcm frame
         # audio_frame_name = audio_frame.get_name()
