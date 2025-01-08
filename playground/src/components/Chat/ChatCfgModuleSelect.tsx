@@ -220,6 +220,17 @@ export function RemoteModuleCfgSheet() {
                   GraphEditor.removeNodeAndConnections(selectedGraphCopy, tool)
                   needUpdate = true
                 })
+                const geminiV2VNode = GraphEditor.findNodeByPredicate(selectedGraphCopy, (node) => node.addon === "gemini_v2v_python");
+                if (geminiV2VNode) {
+                  GraphEditor.addOrUpdateConnection(
+                    selectedGraphCopy,
+                    `${agoraRtcNode.name}`,
+                    `${geminiV2VNode.name}`,
+                    ProtocolLabel.VIDEO_FRAME,
+                    "video_frame"
+                  );
+                  enableRTCVideoSubscribe = true;
+                }
 
                 // Process tool modules
                 if (tools.length > 0) {

@@ -516,7 +516,6 @@
                 "name": "data",
                 "dest": [
                   {
-                    "extension_group": "default",
                     "extension": "agora_rtc"
                   }
                 ]
@@ -572,7 +571,6 @@
                 "name": "pcm_frame",
                 "dest": [
                   {
-                    "extension_group": "default",
                     "extension": "agora_rtc"
                   }
                 ]
@@ -1038,7 +1036,6 @@
             ]
           },
           {
-            "extension_group": "transcriber",
             "extension": "message_collector",
             "data": [
               {
