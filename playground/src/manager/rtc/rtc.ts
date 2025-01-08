@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import AgoraRTC, {
@@ -166,8 +165,8 @@ export class RtcManager extends AGEventEmitter<RtcEvents> {
   }
 
   private _parseData(data: any): ITextItem | void {
-    const decoder = new TextDecoder("utf-8")
-    const decodedMessage = decoder.decode(data)
+    let decoder = new TextDecoder("utf-8")
+    let decodedMessage = decoder.decode(data)
 
     console.log("[test] textstream raw data", decodedMessage)
 
