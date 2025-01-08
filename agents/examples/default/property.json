@@ -68,6 +68,15 @@
           },
           {
             "type": "extension",
+            "name": "weatherapi_tool_python",
+            "addon": "weatherapi_tool_python",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
+          },
+          {
+            "type": "extension",
             "name": "langfuse_tracer",
             "addon": "langfuse_tracer",
             "extension_group": "default",
@@ -272,6 +281,21 @@
           },
           {
             "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
             "extension": "chatgpt_mem0",
             "cmd": [
               {
@@ -293,6 +317,10 @@
                   {
                     "extension_group": "default",
                     "extension": "hello_world"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "weatherapi_tool_python"
                   }
                 ]
               }
@@ -377,6 +405,15 @@
             "name": "vision_tool_python",
             "addon": "vision_tool_python",
             "extension_group": "chatgpt"
+          },
+          {
+            "type": "extension",
+            "name": "weatherapi_tool_python",
+            "addon": "weatherapi_tool_python",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
           },
           {
             "type": "extension",
@@ -558,6 +595,21 @@
           },
           {
             "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
             "extension": "chatgpt_mem0",
             "cmd": [
               {
@@ -575,6 +627,10 @@
                   {
                     "extension_group": "chatgpt",
                     "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "weatherapi_tool_python"
                   }
                 ]
               }
@@ -659,6 +715,15 @@
             "name": "vision_tool_python",
             "addon": "vision_tool_python",
             "extension_group": "chatgpt"
+          },
+          {
+            "type": "extension",
+            "name": "weatherapi_tool_python",
+            "addon": "weatherapi_tool_python",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
           },
           {
             "type": "extension",
@@ -840,6 +905,21 @@
           },
           {
             "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
             "extension": "chatgpt_mem0",
             "cmd": [
               {
@@ -857,6 +937,10 @@
                   {
                     "extension_group": "chatgpt",
                     "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "weatherapi_tool_python"
                   }
                 ]
               }
@@ -941,6 +1025,15 @@
             "name": "vision_tool_python",
             "addon": "vision_tool_python",
             "extension_group": "chatgpt"
+          },
+          {
+            "type": "extension",
+            "name": "weatherapi_tool_python",
+            "addon": "weatherapi_tool_python",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
           },
           {
             "type": "extension",
@@ -1122,6 +1215,21 @@
           },
           {
             "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
             "extension": "chatgpt_mem0",
             "cmd": [
               {
@@ -1139,6 +1247,10 @@
                   {
                     "extension_group": "chatgpt",
                     "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "weatherapi_tool_python"
                   }
                 ]
               }
