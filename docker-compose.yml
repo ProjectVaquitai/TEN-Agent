@@ -1,13 +1,6 @@
 services:
   ten_agent_dev:
-<<<<<<< HEAD
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    image: ghcr.io/ten-framework/ten_agent_build:0.3.3
-=======
     image: ghcr.io/ten-framework/ten_agent_build:0.3.4
->>>>>>> upstream/main
     container_name: ten_agent_dev
     platform: linux/amd64
     tty: true
@@ -30,12 +23,8 @@ services:
     networks:
       - ten_agent_network
   ten_agent_playground:
-<<<<<<< HEAD
     build:
       context: ./playground
-=======
-    image: ghcr.io/ten-framework/ten_agent_playground:0.6.2-85-g6a234b5
->>>>>>> upstream/main
     container_name: ten_agent_playground
     restart: always
     ports:
