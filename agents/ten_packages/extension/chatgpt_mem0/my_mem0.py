@@ -72,7 +72,8 @@ class MyMemManager:
             if isinstance(memories, dict) and 'results' in memories:
                 results = memories['results']
                 if isinstance(results, list):
-                    memory_text = "\n".join([str(item) for item in results])
+                    memory_text = [{key: (value[:16] if key == 'created_at' else value) for key, value in entry.items() if key not in ['id', 'hash', 'user_id', 'metadata']} for entry in results]
+                    memory_text = "\n".join([str(item) for item in memory_text])
             return memory_text
         except Exception as e:
             self.ten_env.log_error(f"Error searching memories: {str(e)}")

@@ -37,3 +37,4 @@ xdump_config
 .pnpm-store
 data/
 agents/output_images/
+agents/output_audio/
