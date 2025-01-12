@@ -93,6 +93,7 @@ func NewHttpServer(httpServerConfig *HttpServerConfig, userStore UserStore, sess
 		sessionStore: sessionStore,
 	}
 	s.engine = gin.Default()
+	s.engine.Use(corsMiddleware()) // Updated this line
 	return s
 }
 
@@ -753,7 +754,6 @@ func (s *HttpServer) handleRegister(c *gin.Context) {
 
 func (s *HttpServer) Start() {
 	r := s.engine
-	r.Use(corsMiddleware())
 
 	r.GET("/", s.handlerHealth)
 	r.GET("/health", s.handlerHealth)
