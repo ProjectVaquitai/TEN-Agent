@@ -2,8 +2,12 @@ import axios from "axios"
 import { store } from "@/store"
 import { setAuthenticated } from "@/store/reducers/authReducer"
 
+const AGENT_SERVER_URL = process.env.NEXT_PUBLIC_AGENT_SERVER_URL;
+
+console.log(`server url: ${AGENT_SERVER_URL}`)
+
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: AGENT_SERVER_URL
 })
 
 api.interceptors.request.use((config) => {
@@ -16,14 +20,18 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("authToken")
-      store.dispatch(setAuthenticated(false))
-      window.location.href = "/login"
+  async (error) => {
+    if (error.response) {
+      const { status } = error.response;
+      if (status === 401) {
+        localStorage.removeItem("authToken");
+        store.dispatch(setAuthenticated(false));
+        window.location.href = "/login";
+      }
+      return Promise.reject(new Error(`Request failed with status ${status}`));
     }
-    return Promise.reject(error)
-  },
+    return Promise.reject(error);
+  }
 )
 
 export default api

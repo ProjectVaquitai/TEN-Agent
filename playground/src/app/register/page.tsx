@@ -13,7 +13,7 @@ export default function Register() {
     e.preventDefault()
     setError('')
     try {
-      const response = await fetch('http://localhost:8080/register', {
+      const response = await fetch('/register', { // Use relative URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
