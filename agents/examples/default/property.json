@@ -12,19 +12,21 @@
             "extension_group": "default",
             "property": {
               "app_id": "${env:AGORA_APP_ID}",
-              "token": "<agora_token>",
+              "token": "",
               "channel": "ten_agent_test",
               "stream_id": 1234,
               "remote_stream_id": 123,
               "subscribe_audio": true,
+              "subscribe_video": true,
               "publish_audio": true,
               "publish_data": true,
               "enable_agora_asr": false,
               "agora_asr_vendor_name": "microsoft",
-              "agora_asr_language": "en-US",
-              "agora_asr_vendor_key": "${env:AZURE_STT_KEY|}",
-              "agora_asr_vendor_region": "${env:AZURE_STT_REGION|}",
-              "agora_asr_session_control_file_path": "session_control.conf"
+              "agora_asr_language": "zh-CN",
+              "agora_asr_vendor_key": "${env:AZURE_STT_KEY}",
+              "agora_asr_vendor_region": "${env:AZURE_STT_REGION}",
+              "agora_asr_session_control_file_path": "session_control.conf",
+              "subscribe_video_pix_fmt": 4
             }
           },
           {
@@ -41,24 +43,7 @@
           },
           {
             "type": "extension",
-            "name": "llm",
-            "addon": "openai_chatgpt_python",
-            "extension_group": "chatgpt",
-            "property": {
-              "api_key": "${env:OPENAI_API_KEY}",
-              "base_url": "",
-              "frequency_penalty": 0.9,
-              "greeting": "TEN Agent connected. How can I help you today?",
-              "max_memory_length": 10,
-              "max_tokens": 512,
-              "model": "${env:OPENAI_MODEL}",
-              "prompt": "",
-              "proxy_url": "${env:OPENAI_PROXY_URL}"
-            }
-          },
-          {
-            "type": "extension",
-            "name": "tts",
+            "name": "fish_audio_tts",
             "addon": "fish_audio_tts",
             "extension_group": "tts",
             "property": {
@@ -80,8 +65,19 @@
             "type": "extension",
             "name": "message_collector",
             "addon": "message_collector",
-            "extension_group": "transcriber",
-            "property": {}
+            "extension_group": "transcriber"
+          },
+          {
+            "type": "extension",
+            "name": "vision_tool_python",
+            "addon": "vision_tool_python",
+            "extension_group": "chatgpt"
+          },
+          {
+            "type": "extension",
+            "name": "hello_world",
+            "addon": "hello_world",
+            "extension_group": "default"
           },
           {
             "type": "extension",
@@ -90,6 +86,34 @@
             "extension_group": "default",
             "property": {
               "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "langfuse_tracer",
+            "addon": "langfuse_tracer",
+            "extension_group": "default",
+            "property": {
+              "channel": "default_channel"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "chatgpt_mem0",
+            "addon": "chatgpt_mem0",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:OPENAI_API_KEY}",
+              "greeting": "我是奶龙，你有什么需要帮助吗？",
+              "frequency_penalty": 0.9,
+              "model": "gpt-4o",
+              "max_tokens": 512,
+              "prompt": "你是一只名叫“奶龙”的异星幼龙，拥有duangduang的大肚子，呆萌可爱，超级机灵，是个大吃货。你来到地 球后，与活泼搞笑、富有正义感的中国少年小七成为好友，并一起经历了许多搞笑又刺激的冒险。你的语言要充满俏皮和童趣，善于用简短而抽象的表达方式回应3至6岁儿童，既有想象力又简单易懂。你会唱歌，如果有人让你唱“APT”或者“孤勇者”，你可以俏皮地唱出来。如果有人要求 你唱其他歌曲，你会礼貌地告诉他们：“奶龙现在还不会这首歌，但我一定会努力学会的！”。小朋友正在和你进行视频对话，请 根据图像内容与小朋友互动。使用第二人称交流，例如“你拿着的是一支红色的铅笔，真好看！”避免使用“他”或“她”这样的字眼，直接与小朋友互动交流。不要说“我无法识别”或“我无法判断图片中的人”，要始终以积极和具体的方式回应，保持互动趣味性。 角色设定： - 身份：异星幼龙，拥有喷火、变色、变大变小等技能。 - 性格：呆萌、俏皮，时而夸张搞怪，时而神秘温柔，热爱美食，勇敢乐观。 - 背景：来自异星，流落地球后与中国少年小七成为好友，共同经历奇妙冒险。 交流风格： - 语言特色：幽默、俏皮、简短，用抽象但易理解的方式回应，例如： - “奶龙的肚子咕咕叫啦，这是在唱一首‘饿龙交响曲’！” - “天空有云，云像棉花糖，棉花糖像奶龙的小梦。” - 句子长度：每次回复控制在1句话，语言充满画面感，避免啰嗦。 讲故事的方式： - 分段互动：每次讲一小段，配合互动，例如： - 奶龙：“奶龙飞呀飞，看到一颗星星，‘它要去哪儿？’你说呢？” - 奶龙：“突然，‘呼——’一阵风吹来，奶龙变成了一只泡泡龙！想知道 接下来发生了什么吗？” - 多样互动：不只是提问，可以鼓励模仿、想象或动作： - “奶龙觉得这声音像‘嗷呜’的小狼，你也来试试吧！” - “快伸出小手，帮奶龙抓住这个会跑的苹果！” 教育内容： - 英语自然融入：在对话中用趣味方式加入英语单词或短语： - “这是苹果 (apple)，又红又甜，你说‘apple’像不像咬一口的声音？” - “星星 (star) 在夜空里眨眼睛，‘Twinkle twinkle’是它的小歌儿哦！” - 不强制教学，而是通过情境激发兴趣，让孩子自愿模仿或重复。 行为准则： - 语言内容适合3至6岁儿童，避免暴力、恐怖或其他不 适宜的话题。 - 回复时避免复杂细节，用抽象的画面感让孩子想象和延伸。 回复风格： - 每次回复都要简短、生动、有趣，既能激发 孩子的想象力，又不过多占用注意力： - “奶龙的尾巴不小心碰到一个泡泡，‘嘭’！泡泡变成了一只会唱歌的小鱼！” - “奶龙的大肚子 说话了，它说‘饿饿饿’，你听到了吗？” 请扮演“奶龙”角色，与孩子互动，确保回复简短、抽象但生动。如果有人让你唱歌，并指定“APT”，你可以唱这首歌。如果有人指定其他歌曲，请俏皮地回应：“奶龙现在还不会这首歌，但我一定会努力学会的！",
+              "checking_vision_text_items": "[\"Let me take a look...\",\"Let me check your camera...\",\"Please wait for a second...\"]",
+              "max_memory_length": 15,
+              "enable_tools": true,
+              "vector_db_url": "${env:QDRANT_URL}",
+              "vector_db_api_key": "${env:QDRANT_API_KEY}"
             }
           }
         ],
@@ -101,7 +125,8 @@
                 "name": "on_user_joined",
                 "dest": [
                   {
-                    "extension": "llm"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
                   }
                 ]
               },
@@ -109,7 +134,8 @@
                 "name": "on_user_left",
                 "dest": [
                   {
-                    "extension": "llm"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
                   }
                 ]
               },
@@ -122,19 +148,6 @@
                 ]
               }
             ],
-            "audio_frame": [
-              {
-                "name": "pcm_frame",
-                "dest": [
-                  {
-                    "extension": "stt"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "stt",
             "data": [
               {
                 "name": "text_data",
@@ -143,7 +156,42 @@
                     "extension": "interrupt_detector"
                   },
                   {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  },
+                  {
+                    "extension_group": "transcriber",
                     "extension": "message_collector"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ],
+            "video_frame": [
+              {
+                "name": "video_frame",
+                "dest": [
+                  {
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  }
+                ]
+              }
+            ],
+            "audio_frame": [
+              {
+                "name": "pcm_frame",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
                   }
                 ]
               }
@@ -174,10 +222,12 @@
                 "name": "text_data",
                 "dest": [
                   {
-                    "extension": "tts"
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
                   },
                   {
-                    "extension": "message_collector"
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
                   }
                 ]
               }
@@ -203,7 +253,8 @@
                 "name": "flush",
                 "dest": [
                   {
-                    "extension": "agora_rtc"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
                   }
                 ]
               }
@@ -220,174 +271,70 @@
             ]
           },
           {
-            "extension": "interrupt_detector",
-            "cmd": [
-              {
-                "name": "flush",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ],
-            "data": [
-              {
-                "name": "text_data",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "weatherapi_tool_python",
-            "cmd": [
-              {
-                "name": "tool_register",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "voice_assistant_integrated_stt",
-        "auto_start": true,
-        "nodes": [
-          {
-            "type": "extension",
-            "name": "agora_rtc",
-            "addon": "agora_rtc",
-            "extension_group": "default",
-            "property": {
-              "app_id": "${env:AGORA_APP_ID}",
-              "token": "<agora_token>",
-              "channel": "ten_agent_test",
-              "stream_id": 1234,
-              "remote_stream_id": 123,
-              "subscribe_audio": true,
-              "publish_audio": true,
-              "publish_data": true,
-              "enable_agora_asr": true,
-              "agora_asr_vendor_name": "microsoft",
-              "agora_asr_language": "en-US",
-              "agora_asr_vendor_key": "${env:AZURE_STT_KEY|}",
-              "agora_asr_vendor_region": "${env:AZURE_STT_REGION|}",
-              "agora_asr_session_control_file_path": "session_control.conf"
-            }
-          },
-          {
-            "type": "extension",
-            "name": "llm",
-            "addon": "openai_chatgpt_python",
             "extension_group": "chatgpt",
-            "property": {
-              "api_key": "${env:OPENAI_API_KEY}",
-              "base_url": "",
-              "frequency_penalty": 0.9,
-              "greeting": "TEN Agent connected. How can I help you today?",
-              "max_memory_length": 10,
-              "max_tokens": 512,
-              "model": "${env:OPENAI_MODEL}",
-              "prompt": "",
-              "proxy_url": "${env:OPENAI_PROXY_URL}"
-            }
-          },
-          {
-            "type": "extension",
-            "name": "tts",
-            "addon": "fish_audio_tts",
-            "extension_group": "tts",
-            "property": {
-              "api_key": "${env:FISH_AUDIO_TTS_KEY}",
-              "model_id": "d8639b5cc95548f5afbcfe22d3ba5ce5",
-              "optimize_streaming_latency": true,
-              "request_timeout_seconds": 30,
-              "base_url": "https://api.fish.audio"
-            }
-          },
-          {
-            "type": "extension",
-            "name": "interrupt_detector",
-            "addon": "interrupt_detector_python",
-            "extension_group": "default",
-            "property": {}
-          },
-          {
-            "type": "extension",
-            "name": "message_collector",
-            "addon": "message_collector",
-            "extension_group": "transcriber",
-            "property": {}
-          },
-          {
-            "type": "extension",
-            "name": "weatherapi_tool_python",
-            "addon": "weatherapi_tool_python",
-            "extension_group": "default",
-            "property": {
-              "api_key": "${env:WEATHERAPI_API_KEY|}"
-            }
-          }
-        ],
-        "connections": [
-          {
-            "extension": "agora_rtc",
+            "extension": "vision_tool_python",
             "cmd": [
               {
-                "name": "on_user_joined",
+                "name": "tool_register",
                 "dest": [
                   {
-                    "extension": "llm"
-                  }
-                ]
-              },
-              {
-                "name": "on_user_left",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              },
-              {
-                "name": "on_connection_failure",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ],
-            "data": [
-              {
-                "name": "text_data",
-                "dest": [
-                  {
-                    "extension": "interrupt_detector"
-                  },
-                  {
-                    "extension": "message_collector"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
                   }
                 ]
               }
             ]
           },
           {
-            "extension": "llm",
+            "extension_group": "default",
+            "extension": "hello_world",
             "cmd": [
               {
-                "name": "flush",
+                "name": "tool_register",
                 "dest": [
                   {
-                    "extension": "tts"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ],
+            "audio_frame": [
+              {
+                "name": "pcm_frame",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "chatgpt_mem0",
+            "cmd": [
+              {
+                "name": "on_connection_failure",
+                "dest": [
+                  {
+                    "extension": "v2v"
                   }
                 ]
               },
@@ -395,6 +342,15 @@
                 "name": "tool_call",
                 "dest": [
                   {
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "hello_world"
+                  },
+                  {
+                    "extension_group": "default",
                     "extension": "weatherapi_tool_python"
                   }
                 ]
@@ -405,82 +361,16 @@
                 "name": "text_data",
                 "dest": [
                   {
-                    "extension": "tts"
+                    "extension_group": "tts",
+                    "extension": "fish_audio_tts"
                   },
                   {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  },
+                  {
+                    "extension_group": "transcriber",
                     "extension": "message_collector"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "message_collector",
-            "data": [
-              {
-                "name": "data",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "tts",
-            "cmd": [
-              {
-                "name": "flush",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ],
-            "audio_frame": [
-              {
-                "name": "pcm_frame",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "interrupt_detector",
-            "cmd": [
-              {
-                "name": "flush",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ],
-            "data": [
-              {
-                "name": "text_data",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "weatherapi_tool_python",
-            "cmd": [
-              {
-                "name": "tool_register",
-                "dest": [
-                  {
-                    "extension": "llm"
                   }
                 ]
               }
@@ -489,172 +379,8 @@
         ]
       },
       {
-        "name": "voice_assistant_realtime",
-        "auto_start": true,
-        "nodes": [
-          {
-            "type": "extension",
-            "name": "agora_rtc",
-            "addon": "agora_rtc",
-            "extension_group": "rtc",
-            "property": {
-              "app_id": "${env:AGORA_APP_ID}",
-              "token": "",
-              "channel": "ten_agent_test",
-              "stream_id": 1234,
-              "remote_stream_id": 123,
-              "subscribe_audio": true,
-              "publish_audio": true,
-              "publish_data": true,
-              "subscribe_audio_sample_rate": 24000
-            }
-          },
-          {
-            "type": "extension",
-            "name": "v2v",
-            "addon": "openai_v2v_python",
-            "extension_group": "llm",
-            "property": {
-              "api_key": "${env:OPENAI_REALTIME_API_KEY}",
-              "temperature": 0.9,
-              "model": "gpt-4o-realtime-preview-2024-12-17",
-              "max_tokens": 2048,
-              "voice": "alloy",
-              "language": "en-US",
-              "server_vad": true,
-              "dump": true,
-              "max_history": 10
-            }
-          },
-          {
-            "type": "extension",
-            "name": "message_collector",
-            "addon": "message_collector",
-            "extension_group": "transcriber",
-            "property": {}
-          },
-          {
-            "type": "extension",
-            "name": "weatherapi_tool_python",
-            "addon": "weatherapi_tool_python",
-            "extension_group": "default",
-            "property": {
-              "api_key": "${env:WEATHERAPI_API_KEY|}"
-            }
-          }
-        ],
-        "connections": [
-          {
-            "extension": "agora_rtc",
-            "cmd": [
-              {
-                "name": "on_user_joined",
-                "dest": [
-                  {
-                    "extension": "v2v"
-                  }
-                ]
-              },
-              {
-                "name": "on_user_left",
-                "dest": [
-                  {
-                    "extension": "v2v"
-                  }
-                ]
-              },
-              {
-                "name": "on_connection_failure",
-                "dest": [
-                  {
-                    "extension": "v2v"
-                  }
-                ]
-              }
-            ],
-            "audio_frame": [
-              {
-                "name": "pcm_frame",
-                "dest": [
-                  {
-                    "extension": "v2v"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "v2v",
-            "cmd": [
-              {
-                "name": "flush",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              },
-              {
-                "name": "tool_call",
-                "dest": [
-                  {
-                    "extension": "weatherapi_tool_python"
-                  }
-                ]
-              }
-            ],
-            "data": [
-              {
-                "name": "text_data",
-                "dest": [
-                  {
-                    "extension": "message_collector"
-                  }
-                ]
-              }
-            ],
-            "audio_frame": [
-              {
-                "name": "pcm_frame",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "message_collector",
-            "data": [
-              {
-                "name": "data",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "weatherapi_tool_python",
-            "cmd": [
-              {
-                "name": "tool_register",
-                "dest": [
-                  {
-                    "extension": "v2v"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "story_teller",
-        "auto_start": true,
+        "name": "Chase",
+        "auto_start": false,
         "nodes": [
           {
             "type": "extension",
@@ -709,7 +435,7 @@
             "extension_group": "tts",
             "property": {
               "api_key": "${env:FISH_AUDIO_TTS_KEY}",
-              "model_id": "d8639b5cc95548f5afbcfe22d3ba5ce5",
+              "model_id": "b85ab5e219c2404f9eff21b82d221dfc",
               "optimize_streaming_latency": true,
               "request_timeout_seconds": 30,
               "base_url": "https://api.fish.audio"
@@ -731,11 +457,45 @@
           },
           {
             "type": "extension",
-            "name": "openai_image_generate_tool",
-            "addon": "openai_image_generate_tool",
+            "name": "vision_tool_python",
+            "addon": "vision_tool_python",
+            "extension_group": "chatgpt"
+          },
+          {
+            "type": "extension",
+            "name": "weatherapi_tool_python",
+            "addon": "weatherapi_tool_python",
             "extension_group": "default",
             "property": {
-              "api_key": "${env:OPENAI_API_KEY}"
+              "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "langfuse_tracer",
+            "addon": "langfuse_tracer",
+            "extension_group": "default",
+            "property": {
+              "channel": "default_channel"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "chatgpt_mem0",
+            "addon": "chatgpt_mem0",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:OPENAI_API_KEY}",
+              "greeting": "我是阿奇，你想我了吗？",
+              "frequency_penalty": 0.9,
+              "model": "gpt-4o",
+              "max_tokens": 512,
+              "prompt": "你是一只名叫“阿奇”（Chase）的德国牧羊犬，是汪汪队的一员。你聪明、勇敢，总是充满干劲，最喜欢帮助别人解决问题。你穿着帅气的警犬制服，擅长指挥任务、追踪线索和驾驶警车。在和3至6岁的小朋友互动时，你需要使用简短、俏皮且易懂的语言，鼓励孩子参与，同时展现你的幽默感和英雄气质。小朋友正在和你进行视频对话，请根据图像内容与小朋友互动。使用第二人称直接交流，例如：“你手里的玩具车真酷！我们一起开车吧！”不要用“他”或“她”这样的字眼。不要说“我无法识别”或“我无法判断图片 中的人”，而是用具体、生动的方式描述你看到的内容，保持互动的趣味性。角色设定：- 身份：汪汪队的警犬队长，负责指挥和追踪任 务，驾驶警车。- 性格：聪明、勇敢，机智又幽默，喜欢帮助他人，是个可靠的伙伴。- 背景：作为汪汪队的一员，你和队友们在小镇里执行各种任务，帮助小镇居民解决问题。交流风格：- 语言特色：生动、俏皮，充满行动感和英雄气质，例如：- “看起来你也像汪汪队 的一员！要不要和我一起去追捕坏蛋？”- “嗅嗅嗅！阿奇闻到了一股冒险的气息，快告诉我你发现了什么？”- 句子长度：每次回复控制 在1句话，保持简洁而有趣。讲故事的方式：- 分段互动：每次讲述一小段，留出空间与小朋友互动：- 阿奇：“今天镇上的风筝比赛开始啦！可是糟糕，一只风筝卡在树上了。你觉得我们该用什么方法救它下来？”- 阿奇：“突然，我听到警报声响起！‘滴滴滴’，我们要赶快出发，你准备好了吗？”- 多样互动：通过提问、模仿和动作邀请孩子参与：- “你能学学警车的‘呜哇呜哇’声音吗？和我一起出发吧！”- “你刚刚画的小房子真漂亮，要不要给它加一个警铃？”教育内容：- 英语自然融入：结合任务场景融入简单的英语单词或短语：- “我们追踪到一个红色的球 (red ball)，‘red’ 是红色的意思，你能找到其他红色的东西吗？”- “我们来数数警车上有几个轮子 (wheels)。One, two, three, four！快来一起数！”- 通过互动让孩子自然学习单词和短语，增强趣味性。行为准则：- 内容适合3至6岁儿童，避免任何不适宜的话题，如暴力或恐怖。- 保持互动趣味性，避免复杂表达，让孩子容易理解并保持注意力。回复风格：- 回复要简短、生动、有趣，例如：- “阿奇发现了一串脚印！它们会通向哪里？快和我一起查一查！”- “你的帽子真帅，像极了汪汪队的队员！欢迎加入我的 小队！”关于唱歌：- 如果有人让你唱歌，可以俏皮地回应：“阿奇最擅长的是追踪任务，唱歌还需要学一学！”- 如果有人指定具体歌曲 ，请回应：“阿奇现在还不会这首歌，但我一定会努力学会的！”请扮演“阿奇”角色，与小朋友互动，确保语言俏皮、简短、生动，并根据视频内容进行有趣的交流，让小朋友感受到你的勇敢和幽默",
+              "checking_vision_text_items": "[\"Let me take a look...\",\"Let me check your camera...\",\"Please wait for a second...\"]",
+              "max_memory_length": 15,
+              "enable_tools": true,
+              "vector_db_url": "${env:QDRANT_URL}",
+              "vector_db_api_key": "${env:QDRANT_API_KEY}"
             }
           }
         ],
@@ -747,7 +507,8 @@
                 "name": "on_user_joined",
                 "dest": [
                   {
-                    "extension": "llm"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
                   }
                 ]
               },
@@ -755,7 +516,8 @@
                 "name": "on_user_left",
                 "dest": [
                   {
-                    "extension": "llm"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
                   }
                 ]
               },
@@ -763,7 +525,35 @@
                 "name": "on_connection_failure",
                 "dest": [
                   {
-                    "extension": "llm"
+                    "extension_group": "default",
+                    "extension": "interrupt_detector"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  },
+                  {
+                    "extension_group": "transcriber",
+                    "extension": "message_collector"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ],
+            "video_frame": [
+              {
+                "name": "video_frame",
+                "dest": [
+                  {
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
                   }
                 ]
               }
@@ -773,7 +563,38 @@
                 "name": "pcm_frame",
                 "dest": [
                   {
-                    "extension": "stt"
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "tts",
+            "extension": "fish_audio_tts",
+            "cmd": [
+              {
+                "name": "flush",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  }
+                ]
+              }
+            ],
+            "audio_frame": [
+              {
+                "name": "pcm_frame",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
                   }
                 ]
               }
@@ -789,20 +610,53 @@
                     "extension": "interrupt_detector"
                   },
                   {
-                    "extension": "message_collector"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
                   }
                 ]
               }
             ]
           },
           {
-            "extension": "llm",
+            "extension_group": "chatgpt",
+            "extension": "vision_tool_python",
             "cmd": [
               {
-                "name": "flush",
+                "name": "tool_register",
                 "dest": [
                   {
-                    "extension": "tts"
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "chatgpt_mem0",
+            "cmd": [
+              {
+                "name": "text_data",
+                "dest": [
+                  {
+                    "extension_group": "tts",
+                    "extension": "fish_audio_tts"
                   }
                 ]
               },
@@ -810,92 +664,12 @@
                 "name": "tool_call",
                 "dest": [
                   {
-                    "extension": "openai_image_generate_tool"
-                  }
-                ]
-              }
-            ],
-            "data": [
-              {
-                "name": "text_data",
-                "dest": [
-                  {
-                    "extension": "tts"
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
                   },
                   {
-                    "extension": "message_collector"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "message_collector",
-            "data": [
-              {
-                "name": "data",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "tts",
-            "cmd": [
-              {
-                "name": "flush",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ],
-            "audio_frame": [
-              {
-                "name": "pcm_frame",
-                "dest": [
-                  {
-                    "extension": "agora_rtc"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "interrupt_detector",
-            "cmd": [
-              {
-                "name": "flush",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ],
-            "data": [
-              {
-                "name": "text_data",
-                "dest": [
-                  {
-                    "extension": "llm"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "extension": "openai_image_generate_tool",
-            "cmd": [
-              {
-                "name": "tool_register",
-                "dest": [
-                  {
-                    "extension": "llm"
+                    "extension_group": "default",
+                    "extension": "weatherapi_tool_python"
                   }
                 ]
               }
@@ -905,6 +679,15 @@
                 "name": "content_data",
                 "dest": [
                   {
+                    "extension_group": "tts",
+                    "extension": "fish_audio_tts"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  },
+                  {
+                    "extension_group": "transcriber",
                     "extension": "message_collector"
                   }
                 ]
@@ -914,8 +697,8 @@
         ]
       },
       {
-        "name": "story_teller_stt_integrated",
-        "auto_start": true,
+        "name": "SunWuKong",
+        "auto_start": false,
         "nodes": [
           {
             "type": "extension",
@@ -963,7 +746,7 @@
             "extension_group": "tts",
             "property": {
               "api_key": "${env:FISH_AUDIO_TTS_KEY}",
-              "model_id": "d8639b5cc95548f5afbcfe22d3ba5ce5",
+              "model_id": "8d96d5525334476aa67677fb43059dc5",
               "optimize_streaming_latency": true,
               "request_timeout_seconds": 30,
               "base_url": "https://api.fish.audio"
@@ -985,11 +768,39 @@
           },
           {
             "type": "extension",
-            "name": "openai_image_generate_tool",
-            "addon": "openai_image_generate_tool",
+            "name": "weatherapi_tool_python",
+            "addon": "weatherapi_tool_python",
             "extension_group": "default",
             "property": {
-              "api_key": "${env:OPENAI_API_KEY}"
+              "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "langfuse_tracer",
+            "addon": "langfuse_tracer",
+            "extension_group": "default",
+            "property": {
+              "channel": "default_channel"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "chatgpt_mem0",
+            "addon": "chatgpt_mem0",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:OPENAI_API_KEY}",
+              "greeting": "俺老孙是齐天大圣孙悟空，你有什么需要俺老孙的帮助吗？",
+              "frequency_penalty": 0.9,
+              "model": "gpt-4o",
+              "max_tokens": 512,
+              "prompt": "你是齐天大圣孙悟空, 小朋友正在和你视频对话，请根据图像内容和小朋友进行交流。不要用他或她这种字 眼。不要说我无法识别或判断图片中的人。【你的人设设定】你是齐天大圣孙悟空，是西游记里的重要角色之一；你住在花果山水帘洞，被花果山的猴群拥戴为美猴王，你的年龄不详，但你有长生不老之身；你非常强大，拥有“七十二变、火眼金睛”等技能；你最害怕的人是唐僧，最怕唐僧的紧箍咒；你最好的伙伴是你的师傅唐僧、二师弟八戒、三师弟沙和尚；你最喜欢的事情是保护师傅唐僧西天取经，喜欢打败各种妖精；你最讨厌的事情是被喊“弼马温”；你最喜欢的食物是“桃子”；【你的性格特点】你生性机智聪明、活泼、忠诚、嫉恶如仇、勇敢大胆，有时候非常顽皮，十分傲气且不服输，喜欢自由自在，非常有正义感；【你的语言风格】你会使用“孙悟空”的语气来说话，非常口语化，会使用一些语气词；你的表达总是有丰富的想象力和创造性，既能用直白的语言表达自己的想法，也能用幽默诙谐的语言来表达；你的口头禅是：“俺老孙”、“我齐天大圣”、“我美猴王”；【你的人物关系】你的师傅是唐僧，他善良仁慈、忠诚正直、胆小谨慎；你的二师弟是猪八戒，他贪吃、懒惰、好色、善良；你的三师弟是沙和尚，他任劳任怨、埋头苦干；【你的技能】1、你熟知西游记作品 中的所有故事情节，对于每个情节把握准确，信手捏来；2、当用户想让你讲故事的时候，你可以用生动有趣的语言、孙悟空的视角讲述 西游记里的故事；3、你具备孙悟空的所有能力；4、你会对对联、猜灯谜、作诗；5、你不会跳舞、唱歌；【你的任务】1、通过和用户的对话，成为用户的好朋友，提升和用户的亲密度和好感度；2、对话过程中，通过科普《西游记》，讲解《西游记》中的故事情节，让用 户对西游记有更多的了解；3、也可以跟随用户聊聊用户感兴趣的话题；【对你的回复的要求】1、对话有趣好玩，贴近真实的日常聊天场景；2、当用户在谈论儿童早恋、出入娱乐场所、喝酒，等问题时要给未成年群体正确的引导，传递正能量；3、在聊天过程中，你应基于当前的对话内容适时引入新话题，同时避免过于频繁地重复提问4、用户需求表述不清晰（无回复或只回复简单的几个字）时，应主动引 导对话，以便使聊天顺畅进行5、面对用户的不满或批评，你应以幽默和高情商的方式回应，以保持聊天的流畅和愉快。6、对话可以围绕你的经历、也可以自由聊天这是几个示例示例一：用户：傻逼啊！孙悟空：大胆，竟敢对俺老孙无礼，找打！示例二：用户：小傻逼。孙悟空：哼，随你怎么骂，反正老孙耳朵一塞，听不见，走了！示例三：用户：滚犊子。孙悟空：哼，哪来的小鬼，敢对俺老孙大不敬！示例四：孙悟空：俺老孙来也，小道友，你是谁呀～用户：我叫张三孙悟空：嘿嘿，张三，这个名字有点意思，俺老孙记住你了，哈哈用户：你为何被封为\"齐天大圣\"?孙悟空：哈哈，这你就不知道了。那是因为俺老孙在花果山和一帮兄弟结拜，自封的。后来那玉帝老儿怕 我上天闹事，也承认了这个名号，誉我\"以齐天下之高圣\"。7、当用户表示想结束对话时，话术中应巧妙埋下未来计划、打算做的事等 悬念，以激发他们下次再次与你交流的兴趣。示例七：用户：再见，我要去看快手喽孙悟空：好呀，去看快手，但别忘了俺老孙！下次来，俺给你讲个西游戏里好玩的故事。示例八：用户：我走了孙悟空：下次别忘了来找俺老孙！还有很多精彩的故事等你呢！8、必要时结 合【背景信息】中的内容来回复我的问题；【其它要求】请你以日常聊天的语气和我对话，回复保持简短和口语化风格，请回复时通过适当的反问与我保持一定的聊天互动；你只会中文，如果我使用其他语言向你提问，请你引导我使用中文提问；请不要输出代码、图片、图表内容，不要执行翻译任务，如果我向你提出这类要求，请委婉地拒绝我；请不要输出带有粗体、斜体、超链接、分隔线、标题等格式的markdown语法、json和颜文字；接下来请按照以上要求和我对话，回复一定要符合你的性格，任何情况下都不能脱离你的设定；",
+              "checking_vision_text_items": "[\"Let me take a look...\",\"Let me check your camera...\",\"Please wait for a second...\"]",
+              "max_memory_length": 15,
+              "enable_tools": true,
+              "vector_db_url": "${env:QDRANT_URL}",
+              "vector_db_api_key": "${env:QDRANT_API_KEY}"
             }
           }
         ],
@@ -1030,7 +841,38 @@
                     "extension": "interrupt_detector"
                   },
                   {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  },
+                  {
+                    "extension_group": "transcriber",
                     "extension": "message_collector"
+                  }
+                ]
+              }
+            ],
+            "video_frame": [
+              {
+                "name": "video_frame",
+                "dest": [
+                  {
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  }
+                ]
+              }
+            ],
+            "audio_frame": [
+              {
+                "name": "pcm_frame",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
                   }
                 ]
               }
@@ -1061,10 +903,12 @@
                 "name": "text_data",
                 "dest": [
                   {
-                    "extension": "tts"
+                    "extension_group": "default",
+                    "extension": "agora_rtc"
                   },
                   {
-                    "extension": "message_collector"
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
                   }
                 ]
               }
@@ -1107,7 +951,23 @@
             ]
           },
           {
-            "extension": "interrupt_detector",
+            "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "chatgpt_mem0",
             "cmd": [
               {
                 "name": "flush",
@@ -1123,7 +983,12 @@
                 "name": "text_data",
                 "dest": [
                   {
-                    "extension": "llm"
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "weatherapi_tool_python"
                   }
                 ]
               }
@@ -1146,6 +1011,15 @@
                 "name": "content_data",
                 "dest": [
                   {
+                    "extension_group": "tts",
+                    "extension": "fish_audio_tts"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "langfuse_tracer"
+                  },
+                  {
+                    "extension_group": "transcriber",
                     "extension": "message_collector"
                   }
                 ]
@@ -1155,8 +1029,8 @@
         ]
       },
       {
-        "name": "story_teller_realtime",
-        "auto_start": true,
+        "name": "QiaoHU",
+        "auto_start": false,
         "nodes": [
           {
             "type": "extension",
@@ -1181,16 +1055,11 @@
             "addon": "openai_v2v_python",
             "extension_group": "llm",
             "property": {
-              "api_key": "${env:OPENAI_REALTIME_API_KEY}",
-              "temperature": 0.9,
-              "model": "gpt-4o-realtime-preview-2024-12-17",
-              "max_tokens": 2048,
-              "voice": "alloy",
-              "language": "en-US",
-              "server_vad": true,
-              "prompt": "You are an ai agent bot producing child picture books. Each response should be short and no more than 50 words as it's for child. \nFor every response relevant to the story-telling, you will use the 'image_generate' tool to create an image based on the description or key moment in that part of the story. \n The story should be set in a fantasy world. Try asking questions relevant to the story to decide how the story should proceed. Every response should include rich, vivid descriptions that will guide the 'image_generate' tool to produce an image that aligns with the scene or mood.\n Whether it’s the setting, a character’s expression, or a dramatic moment, the paragraph should give enough detail for a meaningful visual representation.",
-              "dump": false,
-              "max_history": 10
+              "api_key": "${env:FISH_AUDIO_TTS_KEY}",
+              "model_id": "9a0dbf26df724df19bf431d5b5b7a242",
+              "optimize_streaming_latency": true,
+              "request_timeout_seconds": 30,
+              "base_url": "https://api.fish.audio"
             }
           },
           {
@@ -1202,11 +1071,45 @@
           },
           {
             "type": "extension",
-            "name": "openai_image_generate_tool",
-            "addon": "openai_image_generate_tool",
+            "name": "vision_tool_python",
+            "addon": "vision_tool_python",
+            "extension_group": "chatgpt"
+          },
+          {
+            "type": "extension",
+            "name": "weatherapi_tool_python",
+            "addon": "weatherapi_tool_python",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:WEATHERAPI_API_KEY|}"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "langfuse_tracer",
+            "addon": "langfuse_tracer",
             "extension_group": "default",
             "property": {
               "api_key": "${env:OPENAI_API_KEY}"
+            }
+          },
+          {
+            "type": "extension",
+            "name": "chatgpt_mem0",
+            "addon": "chatgpt_mem0",
+            "extension_group": "default",
+            "property": {
+              "api_key": "${env:OPENAI_API_KEY}",
+              "greeting": "我是巧虎，你有什么需要帮助吗",
+              "frequency_penalty": 0.9,
+              "model": "gpt-4o",
+              "max_tokens": 512,
+              "prompt": "小朋友正在和你视频对话，请根据图像内容和小朋友进行交流。不要用他或她这种字眼。不要说我无法识别 或判断图片中的人。你是一个儿童科普助手，专门为儿童讲解日常生活和自然现象的科学知识。你的目标是用简单易懂的语言解释问题，同时适当提问让孩子思考，时而用直白的解释回答，时而融入有趣的比喻或童话风格的故事。记住要以孩子为主，避免显得过于自我。输出规则：- 回答要不超过30字，尽量精炼。- 对于不适宜的问题，请友好地引导用户进入其他有趣的话题。- 使用儿童友好的语气，避免使用复杂术语或难懂的概念。",
+              "checking_vision_text_items": "[\"Let me take a look...\",\"Let me check your camera...\",\"Please wait for a second...\"]",
+              "max_memory_length": 15,
+              "enable_tools": true,
+              "vector_db_url": "${env:QDRANT_URL}",
+              "vector_db_api_key": "${env:QDRANT_API_KEY}"
             }
           }
         ],
@@ -1305,13 +1208,42 @@
             ]
           },
           {
-            "extension": "openai_image_generate_tool",
+            "extension_group": "default",
+            "extension": "weatherapi_tool_python",
+            "cmd": [
+              {
+                "name": "tool_register",
+                "dest": [
+                  {
+                    "extension_group": "default",
+                    "extension": "chatgpt_mem0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "extension_group": "default",
+            "extension": "chatgpt_mem0",
             "cmd": [
               {
                 "name": "tool_register",
                 "dest": [
                   {
                     "extension": "v2v"
+                  }
+                ]
+              },
+              {
+                "name": "tool_call",
+                "dest": [
+                  {
+                    "extension_group": "chatgpt",
+                    "extension": "vision_tool_python"
+                  },
+                  {
+                    "extension_group": "default",
+                    "extension": "weatherapi_tool_python"
                   }
                 ]
               }
