@@ -17,6 +17,8 @@ interface AuthInitializerProps {
   children: ReactNode
 }
 
+const AGENT_SERVER_URL = process.env.NEXT_PUBLIC_AGENT_SERVER_URL
+
 const AuthInitializer = (props: AuthInitializerProps) => {
   const { children } = props
   const dispatch = useAppDispatch()
@@ -30,7 +32,7 @@ const AuthInitializer = (props: AuthInitializerProps) => {
   useEffect(() => {
     const verifyToken = async (token: string) => {
       try {
-        const response = await fetch("http://localhost:8080/token/verify", {
+        const response = await fetch(`${AGENT_SERVER_URL}/token/verify`, {
           method: "POST",
           headers: {
             Authorization: token,

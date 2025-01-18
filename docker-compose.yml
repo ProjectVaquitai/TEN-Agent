@@ -1,8 +1,6 @@
 services:
   ten_agent_dev:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/ten-framework/ten_agent_build:0.3.4
     container_name: ten_agent_dev
     platform: linux/amd64
     tty: true
@@ -14,19 +12,17 @@ services:
     volumes:
       - ./:/app
       - ${LOG_PATH}:${LOG_PATH}
-    working_dir: /app
     env_file:
       - .env
     environment:
-      - MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/tenagent?authSource=admin
+      - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/${MONGO_INITDB_DATABASE}?authSource=admin
     depends_on:
       - mongodb
     networks:
       - ten_agent_network
   ten_agent_playground:
     build:
-      context: .
-      dockerfile: Dockerfile.playground
+      context: ./playground
     container_name: ten_agent_playground
     restart: always
     ports:
@@ -34,20 +30,18 @@ services:
     networks:
       - ten_agent_network
     environment:
-      - AGENT_SERVER_URL=http://ten_agent_dev:8080
-      - TEN_DEV_SERVER_URL=http://ten_agent_dev:49483
-  ten_agent_demo:
-    build:
-      context: .
-      dockerfile: Dockerfile.demo
-    container_name: ten_agent_demo
-    restart: always
-    ports:
-      - "3002:3000"
-    networks:
-      - ten_agent_network
-    environment:
-      - AGENT_SERVER_URL=http://ten_agent_dev:8080
+      - NEXT_PUBLIC_AGENT_SERVER_URL=http://170.106.119.29:8080
+      - NEXT_PUBLIC_TEN_DEV_SERVER_URL=http://170.106.119.29:49483
+  # ten_agent_demo:
+  #   image: ghcr.io/ten-framework/ten_agent_demo:0.6.2-36-gd5dba93
+  #   container_name: ten_agent_demo
+  #   restart: always
+  #   ports:
+  #     - "3002:3000"
+  #   networks:
+  #     - ten_agent_network
+  #   environment:
+  #     - AGENT_SERVER_URL=http://ten_agent_dev:8080
   # ten_graph_designer:
   #   image: ghcr.io/ten-framework/ten_graph_designer:dde0ff1
   #   container_name: ten_graph_designer
@@ -64,11 +58,11 @@ services:
     restart: always
     ports:
       - "${MONGODB_PORT}:27017"
-    command: ["mongod", "--auth"] # Add this line to enable authentication
+    command: ["mongod", "--auth"]
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     volumes:
       - mongodb_data:/data/db
       - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
