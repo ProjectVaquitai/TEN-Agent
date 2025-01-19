@@ -17,28 +17,30 @@ const TEN_DEV_SERVER_URL = NEXT_PUBLIC_TEN_DEV_SERVER_URL;
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const url = req.nextUrl.clone();
-
-  console.log(`The server url is ${AGENT_SERVER_URL}`);
-
   if (pathname.startsWith(`/api/agents/`)) {
-    // Proxy all agents API requests
+    // if (!pathname.startsWith('/api/agents/start')) {
+    // Proxy all other agents API requests
     url.href = `${AGENT_SERVER_URL}${pathname.replace('/api/agents/', '/')}`;
-
     try {
       const body = await req.json();
       console.log(`Request to ${pathname} with body ${JSON.stringify(body)}`);
     } catch (e) {
       console.log(`Request to ${pathname} ${e}`);
     }
-
+    // console.log(`Rewriting request to ${url.href}`);
     return NextResponse.rewrite(url);
+    // } else {
+    //     return NextResponse.next();
+    // }
   } else if (pathname.startsWith(`/api/vector/`)) {
-    // Proxy all vector API requests
+    // Proxy all other documents requests
     url.href = `${AGENT_SERVER_URL}${pathname.replace('/api/vector/', '/vector/')}`;
+    // console.log(`Rewriting request to ${url.href}`);
     return NextResponse.rewrite(url);
   } else if (pathname.startsWith(`/api/token/`)) {
-    // Proxy all token API requests
+    // Proxy all other documents requests
     url.href = `${AGENT_SERVER_URL}${pathname.replace('/api/token/', '/token/')}`;
+    // console.log(`Rewriting request to ${url.href}`);
     return NextResponse.rewrite(url);
   } else if (pathname.startsWith('/api/dev/')) {
     if (pathname.startsWith('/api/dev/v1/addons/default-properties')) {
@@ -46,9 +48,7 @@ export async function middleware(req: NextRequest) {
       console.log(`Rewriting request to ${url.href}`);
       return NextResponse.rewrite(url);
     }
-
-    // Proxy all other dev API requests
-    url.href = `${TEN_DEV_SERVER_URL}${pathname.replace('/api/dev/', '/api/designer/')}`;
+    url.href = `${TEN_DEV_SERVER_URL}${pathname.replace('/api/dev/', '/api/dev-server/')}`;
     return NextResponse.rewrite(url);
   } else {
     // Allow all other requests to proceed as normal

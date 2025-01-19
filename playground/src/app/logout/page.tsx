@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation"
 import { useDispatch } from "react-redux"
 import { setAuthenticated } from "@/store/reducers/authReducer"
 
+const AGENT_SERVER_URL = process.env.NEXT_PUBLIC_AGENT_SERVER_URL
+
 export default function Logout() {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -13,7 +15,7 @@ export default function Logout() {
       const token = localStorage.getItem("authToken")
       if (token) {
         try {
-          const response = await fetch("http://localhost:8080/logout", {
+          const response = await fetch(`${AGENT_SERVER_URL}/logout`, {
             method: "POST",
             headers: {
               Authorization: token,

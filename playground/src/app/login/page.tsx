@@ -27,6 +27,7 @@ export default function Login() {
     e.preventDefault()
     setError("")
     try {
+      console.log(`url: ${AGENT_SERVER_URL}/login`)
       const response = await fetch(`${AGENT_SERVER_URL}/login`, {
         method: 'POST',
         headers: {

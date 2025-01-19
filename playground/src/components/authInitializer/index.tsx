@@ -54,24 +54,27 @@ const AuthInitializer = (props: AuthInitializerProps) => {
       verifyToken(token)
     } else if (!isAuthenticated) {
       router.push("/login")
-      return
-    }
-
-    const options = getOptionsFromLocal()
-    initialize()
-    if (options && options.channel) {
-      dispatch(reset())
-      dispatch(setOptions(options))
-    } else {
-      dispatch(reset())
-      dispatch(
-        setOptions({
-          channel: getRandomChannel(),
-          userId: getRandomUserId(),
-        }),
-      )
     }
   }, [dispatch, isAuthenticated, router])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const options = getOptionsFromLocal()
+      initialize()
+      if (options && options.channel) {
+        dispatch(reset())
+        dispatch(setOptions(options))
+      } else {
+        dispatch(reset())
+        dispatch(
+          setOptions({
+            channel: getRandomChannel(),
+            userId: getRandomUserId(),
+          }),
+        )
+      }
+    }
+  }, [dispatch, isAuthenticated])
 
   useEffect(() => {
     if (selectedGraphId) {
