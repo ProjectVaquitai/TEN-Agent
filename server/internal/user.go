@@ -1,8 +1,10 @@
 package internal
 
 import (
-	"errors"
-	"sync"
+	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type User struct {
@@ -16,111 +18,97 @@ type User struct {
 
 // UserStore interface for future-proofing
 type UserStore interface {
-	CreateUser(u *User) error
-	UpdateUser(u *User) error
-	ArchiveUser(id string) error
-	GetUserByEmail(email string) (*User, error)
-	GetUserByID(id string) (*User, error)
-	GetUserPreferences(id string) (map[string]string, error)
-	SetUserPreference(id, key, value string) error
-	DeleteUserPreference(id, key string) error
+	CreateUser(ctx context.Context, u *User) error
+	UpdateUser(ctx context.Context, u *User) error
+	ArchiveUser(ctx context.Context, id string) error
+	GetUserByEmail(ctx context.Context, email string) (*User, error)
+	GetUserByID(ctx context.Context, id string) (*User, error)
+	GetUserPreferences(ctx context.Context, id string) (map[string]string, error)
+	SetUserPreference(ctx context.Context, id, key, value string) error
+	DeleteUserPreference(ctx context.Context, id, key string) error
 }
 
-type InMemoryUserStore struct {
-	mu    sync.Mutex
-	users map[string]*User
+type MongoDBUserStore struct {
+	collection *mongo.Collection
 }
 
-func NewInMemoryUserStore() *InMemoryUserStore {
-	return &InMemoryUserStore{
-		users: make(map[string]*User),
+func NewMongoDBUserStore(client *mongo.Client, dbName, collectionName string) *MongoDBUserStore {
+	collection := client.Database(dbName).Collection(collectionName)
+	return &MongoDBUserStore{collection: collection}
+}
+
+func (s *MongoDBUserStore) CreateUser(ctx context.Context, u *User) error {
+	_, err := s.collection.InsertOne(ctx, u)
+	if err != nil {
+		return err
 	}
-}
-
-func (s *InMemoryUserStore) CreateUser(u *User) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if _, found := s.users[u.ID]; found {
-		return errors.New("user already exists")
-	}
-	s.users[u.ID] = u
 	return nil
 }
 
-func (s *InMemoryUserStore) UpdateUser(u *User) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	_, found := s.users[u.ID]
-	if !found {
-		return errors.New("user not found")
+func (s *MongoDBUserStore) UpdateUser(ctx context.Context, u *User) error {
+	filter := bson.M{"id": u.ID}
+	update := bson.M{"$set": u}
+	_, err := s.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
 	}
-	s.users[u.ID] = u
 	return nil
 }
 
-func (s *InMemoryUserStore) ArchiveUser(id string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	user, found := s.users[id]
-	if !found {
-		return errors.New("user not found")
+func (s *MongoDBUserStore) ArchiveUser(ctx context.Context, id string) error {
+	filter := bson.M{"id": id}
+	update := bson.M{"$set": bson.M{"isarchived": true}}
+	_, err := s.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
 	}
-	user.IsArchived = true
 	return nil
 }
 
-func (s *InMemoryUserStore) GetUserByEmail(email string) (*User, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	for _, user := range s.users {
-		if user.Email == email {
-			return user, nil
-		}
+func (s *MongoDBUserStore) GetUserByEmail(ctx context.Context, email string) (*User, error) {
+	filter := bson.M{"email": email}
+	var user User
+	err := s.collection.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("user not found")
+	return &user, nil
 }
 
-func (s *InMemoryUserStore) GetUserByID(id string) (*User, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	user, found := s.users[id]
-	if !found {
-		return nil, errors.New("user not found")
+func (s *MongoDBUserStore) GetUserByID(ctx context.Context, id string) (*User, error) {
+	filter := bson.M{"id": id}
+	var user User
+	err := s.collection.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
 
-func (s *InMemoryUserStore) GetUserPreferences(id string) (map[string]string, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	user, found := s.users[id]
-	if !found {
-		return nil, errors.New("user not found")
+func (s *MongoDBUserStore) GetUserPreferences(ctx context.Context, id string) (map[string]string, error) {
+	user, err := s.GetUserByID(ctx, id)
+	if err != nil {
+		return nil, err
 	}
 	return user.Preferences, nil
 }
 
-func (s *InMemoryUserStore) SetUserPreference(id, key, value string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	user, found := s.users[id]
-	if !found {
-		return errors.New("user not found")
+func (s *MongoDBUserStore) SetUserPreference(ctx context.Context, id, key, value string) error {
+	filter := bson.M{"id": id}
+	update := bson.M{"$set": bson.M{"preferences." + key: value}}
+	_, err := s.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
 	}
-	if user.Preferences == nil {
-		user.Preferences = make(map[string]string)
-	}
-	user.Preferences[key] = value
 	return nil
 }
 
-func (s *InMemoryUserStore) DeleteUserPreference(id, key string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	user, found := s.users[id]
-	if !found {
-		return errors.New("user not found")
+func (s *MongoDBUserStore) DeleteUserPreference(ctx context.Context, id, key string) error {
+	filter := bson.M{"id": id}
+	update := bson.M{"$unset": bson.M{"preferences." + key: ""}}
+	_, err := s.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
 	}
-	delete(user.Preferences, key)
 	return nil
 }

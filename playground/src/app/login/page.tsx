@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation"
 import { useDispatch } from "react-redux"
 import { setAuthenticated } from "@/store/reducers/authReducer"
 import Link from "next/link"
-import api from "@/utils/axios"
+
+
+const AGENT_SERVER_URL = process.env.NEXT_PUBLIC_AGENT_SERVER_URL
 
 export default function Login() {
   const [email, setEmail] = useState("")
@@ -25,9 +27,21 @@ export default function Login() {
     e.preventDefault()
     setError("")
     try {
-      const response = await api.post("/login", { email, password })
-      console.log("--> token: ", response.data.token)
-      const token = response.data.data.token
+      console.log(`url: ${AGENT_SERVER_URL}/login`)
+      const response = await fetch(`${AGENT_SERVER_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) {
+        throw new Error('Login failed')
+      }
+      const data = await response.json()
+      console.log("Login response:", data)
+
+      const token = data.data.token
       localStorage.setItem("authToken", token)
       dispatch(setAuthenticated(true))
       router.push("/chatbot")

@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
+const AGENT_SERVER_URL = process.env.NEXT_PUBLIC_AGENT_SERVER_URL
+
 export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,7 +15,7 @@ export default function Register() {
     e.preventDefault()
     setError('')
     try {
-      const response = await fetch('http://localhost:8080/register', {
+      const response = await fetch(`${AGENT_SERVER_URL}/register`, { // Use relative URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

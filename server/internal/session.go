@@ -1,8 +1,10 @@
 package internal
 
 import (
-	"errors"
-	"sync"
+	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Session struct {
@@ -12,42 +14,43 @@ type Session struct {
 
 // SessionStore interface for future-proofing
 type SessionStore interface {
-	CreateSession(s *Session) error
-	GetSession(token string) (*Session, error)
-	DeleteSession(token string) error
+	CreateSession(ctx context.Context, s *Session) error
+	GetSession(ctx context.Context, token string) (*Session, error)
+	DeleteSession(ctx context.Context, token string) error
 }
 
-type InMemorySessionStore struct {
-	mu       sync.Mutex
-	sessions map[string]*Session
+type MongoDBSessionStore struct {
+	collection *mongo.Collection
 }
 
-func NewInMemorySessionStore() *InMemorySessionStore {
-	return &InMemorySessionStore{
-		sessions: make(map[string]*Session),
+func NewMongoDBSessionStore(client *mongo.Client, dbName, collectionName string) *MongoDBSessionStore {
+	collection := client.Database(dbName).Collection(collectionName)
+	return &MongoDBSessionStore{collection: collection}
+}
+
+func (store *MongoDBSessionStore) CreateSession(ctx context.Context, s *Session) error {
+	_, err := store.collection.InsertOne(ctx, s)
+	if err != nil {
+		return err
 	}
-}
-
-func (store *InMemorySessionStore) CreateSession(s *Session) error {
-	store.mu.Lock()
-	defer store.mu.Unlock()
-	store.sessions[s.Token] = s
 	return nil
 }
 
-func (store *InMemorySessionStore) GetSession(token string) (*Session, error) {
-	store.mu.Lock()
-	defer store.mu.Unlock()
-	session, exists := store.sessions[token]
-	if !exists {
-		return nil, errors.New("session not found")
+func (store *MongoDBSessionStore) GetSession(ctx context.Context, token string) (*Session, error) {
+	filter := bson.M{"token": token}
+	var session Session
+	err := store.collection.FindOne(ctx, filter).Decode(&session)
+	if err != nil {
+		return nil, err
 	}
-	return session, nil
+	return &session, nil
 }
 
-func (store *InMemorySessionStore) DeleteSession(token string) error {
-	store.mu.Lock()
-	defer store.mu.Unlock()
-	delete(store.sessions, token)
+func (store *MongoDBSessionStore) DeleteSession(ctx context.Context, token string) error {
+	filter := bson.M{"token": token}
+	_, err := store.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return err
+	}
 	return nil
 }

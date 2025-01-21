@@ -17,20 +17,20 @@ interface AuthInitializerProps {
   children: ReactNode
 }
 
+const AGENT_SERVER_URL = process.env.NEXT_PUBLIC_AGENT_SERVER_URL
+
 const AuthInitializer = (props: AuthInitializerProps) => {
   const { children } = props
   const dispatch = useAppDispatch()
   const { initialize } = useGraphs()
-  const selectedGraphId = useAppSelector(
-    (state) => state.global.selectedGraphId,
-  )
+  const selectedGraphId = useAppSelector((state) => state.global.selectedGraphId)
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated)
   const router = useRouter()
 
   useEffect(() => {
     const verifyToken = async (token: string) => {
       try {
-        const response = await fetch("http://localhost:8080/token/verify", {
+        const response = await fetch(`${AGENT_SERVER_URL}/token/verify`, {
           method: "POST",
           headers: {
             Authorization: token,
@@ -52,24 +52,25 @@ const AuthInitializer = (props: AuthInitializerProps) => {
       verifyToken(token)
     } else if (!isAuthenticated) {
       router.push("/login")
-      return
-    }
-
-    const options = getOptionsFromLocal()
-    initialize()
-    if (options && options.channel) {
-      dispatch(reset())
-      dispatch(setOptions(options))
-    } else {
-      dispatch(reset())
-      dispatch(
-        setOptions({
-          channel: getRandomChannel(),
-          userId: getRandomUserId(),
-        }),
-      )
     }
   }, [dispatch, isAuthenticated, router])
+
+  useEffect(() => {
+    if (isAuthenticated && typeof window !== "undefined") {
+      const options = getOptionsFromLocal()
+      initialize()
+      if (options && options.channel) {
+        dispatch(reset())
+        dispatch(setOptions(options))
+      } else {
+        dispatch(reset())
+        dispatch(setOptions({
+          channel: getRandomChannel(),
+          userId: getRandomUserId(),
+        }))
+      }
+    }
+  }, [dispatch, isAuthenticated])
 
   useEffect(() => {
     if (selectedGraphId) {
