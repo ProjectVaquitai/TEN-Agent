@@ -55,7 +55,7 @@ export default function Chatbot() {
               "m-0 w-full rounded-b-lg bg-[#181a1d] md:w-[480px] md:rounded-lg",
               {
                 ["hidden md:block"]: mobileActiveTab === EMobileActiveTab.CHAT,
-              },
+              }
             )}
           />
           <DynamicChatCard
@@ -63,7 +63,7 @@ export default function Chatbot() {
               "m-0 w-full rounded-b-lg bg-[#181a1d] md:rounded-lg",
               {
                 ["hidden md:block"]: mobileActiveTab === EMobileActiveTab.AGENT,
-              },
+              }
             )}
           />
         </div>

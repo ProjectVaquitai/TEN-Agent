@@ -23,9 +23,7 @@ const AuthInitializer = (props: AuthInitializerProps) => {
   const { children } = props
   const dispatch = useAppDispatch()
   const { initialize } = useGraphs()
-  const selectedGraphId = useAppSelector(
-    (state) => state.global.selectedGraphId,
-  )
+  const selectedGraphId = useAppSelector((state) => state.global.selectedGraphId)
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated)
   const router = useRouter()
 
@@ -58,7 +56,7 @@ const AuthInitializer = (props: AuthInitializerProps) => {
   }, [dispatch, isAuthenticated, router])
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && typeof window !== "undefined") {
       const options = getOptionsFromLocal()
       initialize()
       if (options && options.channel) {
@@ -66,12 +64,10 @@ const AuthInitializer = (props: AuthInitializerProps) => {
         dispatch(setOptions(options))
       } else {
         dispatch(reset())
-        dispatch(
-          setOptions({
-            channel: getRandomChannel(),
-            userId: getRandomUserId(),
-          }),
-        )
+        dispatch(setOptions({
+          channel: getRandomChannel(),
+          userId: getRandomUserId(),
+        }))
       }
     }
   }, [dispatch, isAuthenticated])
