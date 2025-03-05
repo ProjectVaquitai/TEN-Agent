@@ -87,9 +87,8 @@ class InterruptDetectorExtension(Extension):
         ten.log_debug(
             f"on_data {TEXT_DATA_TEXT_FIELD}: {text} {TEXT_DATA_FINAL_FIELD}: {final}"
         )
-
-        if final or len(text) >= 2:
-            self.send_flush_cmd(ten)
+        # if final or len(text) >= 2:
+        #     self.send_flush_cmd(ten)
 
         d = Data.create("text_data")
         d.set_property_bool(TEXT_DATA_FINAL_FIELD, final)
