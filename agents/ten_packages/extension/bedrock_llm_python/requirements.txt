@@ -1,0 +1,7 @@
+boto3
+numpy
+python-dotenv
+asyncio
+volcengine-python-sdk[ark]
+mem0ai
+openai
