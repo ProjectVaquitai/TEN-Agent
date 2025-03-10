@@ -1,12 +1,12 @@
 {
   "type": "extension",
-  "name": "openai_chatgpt_python",
-  "version": "0.1.0",
+  "name": "chatgpt_mem0",
+  "version": "0.5.2",
   "dependencies": [
     {
       "type": "system",
       "name": "ten_runtime_python",
-      "version": "0.8"
+      "version": "0.4"
     }
   ],
   "package": {
@@ -16,7 +16,8 @@
       "BUILD.gn",
       "**.tent",
       "**.py",
-      "README.md"
+      "README.md",
+      "tests/**"
     ]
   },
   "api": {
@@ -66,9 +67,6 @@
       "azure_api_version": {
         "type": "string"
       },
-      "is_enable_video": {
-        "type": "bool"
-      },
       "vector_db_url": {
         "type": "string"
       },
@@ -111,30 +109,21 @@
       {
         "name": "tool_register",
         "property": {
-          "tool": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
-              },
-              "parameters": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {}
-                }
-              }
-            },
-            "required": [
-              "name",
-              "description",
-              "parameters"
-            ]
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "string"
           }
         },
+        "required": [
+          "name",
+          "description",
+          "parameters"
+        ],
         "result": {
           "property": {
             "response": {

@@ -35,3 +35,6 @@ SpeechSDK-Linux.tar.gz
 pyvenv.cfg
 xdump_config
 .idea
+agents/*_images/
+.pnpm-store
+data/

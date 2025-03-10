@@ -655,7 +655,7 @@ class BedrockLLMExtension(AsyncLLMBaseExtension):
         """Initialize OpenAI client."""
         try:
             import openai
-            self.doubao_client = Ark(api_key="3dbd3ebb-bc6e-4af5-bb53-b8c66f9c456a")
+            self.doubao_client = Ark(api_key="")
             # self.openai_client = openai.OpenAI(
             #     api_key=self.config.openai_api_key,
             #     base_url=self.config.openai_base_url or "https://api.openai.com/v1"
